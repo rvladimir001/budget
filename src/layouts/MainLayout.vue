@@ -12,10 +12,10 @@
         />
 
         <q-toolbar-title>
-          Quasar App
+          YourBudget
         </q-toolbar-title>
 
-        <div>Quasar v{{ $q.version }}</div>
+        <div></div>
       </q-toolbar>
     </q-header>
 
