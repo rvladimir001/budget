@@ -14,6 +14,16 @@ import { createStore } from 'vuex'
 
 export default store(function (/* { ssrContext } */) {
   const Store = createStore({
+    state: {
+      statusDialogWaste: false,
+    },
+    getters: {
+      statusDialogWaste: (state) => state.statusDialogWaste
+    },
+    mutations: {
+      setStatusDialogWaste: (state, status) => {state.statusDialogWaste = status}
+    },
+    actions: {},
     modules: {
       // example
     },

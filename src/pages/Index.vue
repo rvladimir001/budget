@@ -15,6 +15,7 @@
       <q-card
         v-for="spending in startingSpendings"
         v-bind:key="spending"
+        @click="setDialog(true)"
         class="my-card">
         <q-card-section
           @dragover="onDragOver"
@@ -25,15 +26,22 @@
         </q-card-section>
       </q-card>
     </div>
+    <div>status - {{status}}</div>
+    <AddWaste/>
   </q-page>
 </template>
 
 <script>
-import {defineComponent, ref, onMounted} from 'vue';
+import {defineComponent, ref, computed, onMounted} from 'vue';
+import {useStore} from "vuex";
+import AddWaste from '../components/AddWaste.vue'
 
 export default defineComponent({
   name: 'PageIndex',
+  components: {AddWaste},
   setup() {
+    const store = useStore();
+    const status = computed(() => store.state.statusDialogWaste);
     const startingSpendings = ref([
       {name: "Продукты"},
       {name: "Бытовая химия"},
@@ -44,12 +52,17 @@ export default defineComponent({
       {name: "Услуги"}
     ]);
 
+    const setDialog = () => {
+      store.commit("setStatusDialogWaste", true);
+    };
+
     onMounted(() => {
     })
 
     return {
       startingSpendings,
-
+      status,
+      setDialog,
       // store the id of the draggable element
       onDragStart(e) {
         console.log("e.target.id", e)
@@ -57,12 +70,12 @@ export default defineComponent({
         // e.dataTransfer.dropEffect = 'move'
       },
 
-      // onDragEnter(e) {
-      //   // don't drop on other draggables
-      //   if (e.target.draggable !== true) {
-      //     e.target.classList.add('drag-enter')
-      //   }
-      // },
+      onDragEnter(e) {
+        // don't drop on other draggables
+        if (e.target.draggable !== true) {
+          e.target.classList.add('drag-enter')
+        }
+      },
 
       onDragLeave(e) {
         e.target.classList.remove('drag-enter')
@@ -73,8 +86,8 @@ export default defineComponent({
       },
 
       onDrop(category) {
-        console.log("category", category)
-
+        console.log("category", category);
+        setDialog();
       }
     }
   }
