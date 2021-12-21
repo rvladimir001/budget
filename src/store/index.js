@@ -1,16 +1,9 @@
 import { store } from 'quasar/wrappers'
 import { createStore } from 'vuex'
 
-// import example from './module-example'
+import { firebaseDB, firebaseAuth } from 'boot/firebase.js'
 
-/*
- * If not building with SSR mode, you can
- * directly export the Store instantiation;
- *
- * The function below can be async too; either use
- * async/await or return a Promise which resolves
- * with the Store instance.
- */
+import { createUserWithEmailAndPassword, signInWithEmailAndPassword  } from "firebase/auth";
 
 export default store(function (/* { ssrContext } */) {
   const Store = createStore({
@@ -23,7 +16,26 @@ export default store(function (/* { ssrContext } */) {
     mutations: {
       setStatusDialogWaste: (state, status) => {state.statusDialogWaste = status}
     },
-    actions: {},
+    actions: {
+      registrationUser(cntx, user) {
+        createUserWithEmailAndPassword(firebaseAuth, user.email.value, user.pas.value)
+          .then( response => {
+            console.log(response)
+          })
+          .catch(error => {
+            console.error(error)
+          })
+      },
+      loginUser(cntx, user) {
+        signInWithEmailAndPassword(firebaseAuth, user.email.value, user.pas.value)
+          .then( response => {
+            console.log(response)
+          })
+          .catch(error => {
+            console.error(error)
+          })
+      }
+    },
     modules: {
       // example
     },
