@@ -1,6 +1,6 @@
 <template>
   <div class="q-pa-md">
-    <div class="q-gutter-y-md" style="max-width: 600px">
+    <div class="q-gutter-y-md q-mx-auto" style="max-width: 600px">
       <q-card>
         <q-tabs
           v-model="tab"
@@ -16,24 +16,71 @@
 
         <q-tab-panels v-model="tab" animated class="bg-teal-1 text-center">
           <q-tab-panel name="login">
-            <div class="q-pa-md">
-              <div class="q-gutter-y-md column" style="max-width: 300px">
-                <q-input standout="bg-teal text-white" v-model="loginEmail" label="Почта" :dense="dense"/>
-                <q-input standout="bg-teal text-white" v-model="loginPas" label="Пароль" :dense="dense"/>
+            <div>
+              <div class="q-gutter-y-md column q-mx-auto" style="max-width: 300px">
+                <q-input standout="bg-teal text-white"
+                         v-model="loginEmail"
+                         label="Почта"
+                         :dense="dense"
+                         error-message="Неверно указана почта или не пройдена регистрация."
+                         :error="invalidEmail"
+                         lazy-rules
+                         :rules="valRules"
+                />
+                <q-input standout="bg-teal text-white"
+                         v-model="loginPas"
+                         label="Пароль"
+                         :dense="dense"
+                         :type="isPwd ? 'password' : 'text'"
+                         error-message="Неверный пароль."
+                         :error="wrongPassword"
+                         lazy-rules
+                         :rules="valRules">
+                  <template v-slot:append>
+                    <q-icon
+                      :name="isPwd ? 'visibility_off' : 'visibility'"
+                      class="cursor-pointer"
+                      @click="isPwd = !isPwd"
+                    />
+                  </template>
+                </q-input>
               </div>
             </div>
-            <q-btn color="secondary" label="Войти" @click="login"/>
+            <q-btn color="secondary" label="Войти" @click="login" :disable="disabledLogin"/>
           </q-tab-panel>
 
           <q-tab-panel name="registration" class="bg-teal-1">
             <div class="q-pa-md">
-              <div class="q-gutter-y-md column" style="max-width: 300px">
-                <q-input standout="bg-teal text-white" v-model="regName" label="Логин" :dense="dense"/>
-                <q-input standout="bg-teal text-white" v-model="regPas" label="Пароль" :dense="dense"/>
-                <q-input standout="bg-teal text-white" v-model="email" label="Почта" :dense="dense"/>
+              <div class="q-gutter-y-md column q-mx-auto" style="max-width: 300px">
+                <q-input standout="bg-teal
+                text-white"
+                         v-model="RegEmail"
+                         label="Почта"
+                         :dense="dense"
+                         lazy-rules
+                         :rules="valRules"
+                />
+                <q-input standout="bg-teal text-white"
+                         v-model="regPas"
+                         label="Пароль"
+                         :dense="dense"
+                         :type="isPwd ? 'password' : 'text'"
+                         error-message="Пароль должен содержать не менее 6 символов."
+                         :error="isValidPas"
+                         lazy-rules
+                         :rules="valRules"
+                >
+                  <template v-slot:append>
+                    <q-icon
+                      :name="isPwd ? 'visibility_off' : 'visibility'"
+                      class="cursor-pointer"
+                      @click="isPwd = !isPwd"
+                    />
+                  </template>
+                </q-input>
               </div>
             </div>
-            <q-btn color="secondary" label="Регистрация" @click="registration"/>
+            <q-btn color="secondary" label="Регистрация" @click="registration" :disable="disabledReg"/>
           </q-tab-panel>
 
         </q-tab-panels>
@@ -43,8 +90,8 @@
 </template>
 
 <script>
-import { ref } from 'vue';
-import { useStore } from "vuex";
+import {computed, ref} from 'vue';
+import {useStore} from "vuex";
 
 export default {
   name: "Login",
@@ -52,25 +99,41 @@ export default {
     const store = useStore();
     const loginEmail = ref("");
     const loginPas = ref("");
-    const regName = ref("");
     const regPas = ref("");
-    const email = ref("");
+    const RegEmail = ref("");
+    const disabledLogin = computed(() => loginEmail.value && loginPas.value || true);
+    const disabledReg = computed(() => regPas.value && RegEmail.value || true);
     const registration = () => {
-      store.dispatch("registrationUser", {email: loginEmail, pas: regPas});
+      store.dispatch("registrationUser", {email: RegEmail, pas: regPas});
     }
     const login = () => {
       store.dispatch("loginUser", {email: loginEmail, pas: loginPas});
     }
+    const invalidEmail = computed(() => store.state.invalidEmail);
+    const wrongPassword = computed(() => store.state.wrongPassword);
     return {
+      valRules: [
+        val => (val && val.length > 0) || 'Заполните поле.'
+      ],
+      isValidPas: computed(() => {
+       if(regPas.value.length >= 6 || regPas.value === "") {
+         return false;
+       }
+       return true
+      }),
       loginEmail,
       loginPas,
-      regName,
       regPas,
-      email,
+      RegEmail,
+      isPwd: ref(true),
       dense: ref(false),
       tab: ref('login'),
       registration,
-      login
+      login,
+      disabledLogin,
+      disabledReg,
+      invalidEmail,
+      wrongPassword
     }
   }
 }
