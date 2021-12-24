@@ -12,12 +12,14 @@ export default store(function (/* { ssrContext } */) {
       invalidEmail: false,
       wrongPassword: false,
       emailAlreadyInUse: false,
+      invalidRegEmail: false
     },
     getters: {
       statusDialogWaste: (state) => state.statusDialogWaste,
       invalidEmail: (state) => state.invalidEmail,
       wrongPassword: (state) => state.wrongPassword,
       emailAlreadyInUse: (state) => state.emailAlreadyInUse,
+      invalidRegEmail: (state) => state.invalidRegEmail,
     },
     mutations: {
       setStatusDialogWaste: (state, status) => {
@@ -32,10 +34,14 @@ export default store(function (/* { ssrContext } */) {
       setEmailAlreadyInUse: (state, status) => {
         state.emailAlreadyInUse = status
       },
+      setInvalidRegEmail: (state, status) => {
+        state.invalidRegEmail = status
+      },
     },
     actions: {
       registrationUser(cntx, user) {
-        console.log("user", user)
+        cntx.commit('setEmailAlreadyInUse', false)
+        cntx.commit('setInvalidRegEmail', false)
         createUserWithEmailAndPassword(firebaseAuth, user.email.value, user.pas.value)
           .then(response => {
             console.log(response)
@@ -43,6 +49,9 @@ export default store(function (/* { ssrContext } */) {
           .catch(error => {
             if (error.code === 'auth/email-already-in-use') {
               cntx.commit('setEmailAlreadyInUse', true)
+            }
+            if (error.code === 'auth/invalid-email') {
+              cntx.commit('setInvalidRegEmail', true)
             }
             console.error("error", error)
             console.error("error.code", error.code)

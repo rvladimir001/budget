@@ -57,6 +57,8 @@
                          v-model="RegEmail"
                          label="Почта"
                          :dense="dense"
+                         error-message="Некорректно указана почта."
+                         :error="invalidRegEmail"
                          lazy-rules
                          :rules="valRules"
                 />
@@ -101,8 +103,8 @@ export default {
     const loginPas = ref("");
     const regPas = ref("");
     const RegEmail = ref("");
-    const disabledLogin = computed(() => loginEmail.value && loginPas.value || true);
-    const disabledReg = computed(() => regPas.value && RegEmail.value || true);
+    const disabledLogin = computed(() => Boolean(loginEmail.value) && Boolean(loginPas.value) || true);
+    const disabledReg = computed(() => Boolean(regPas.value) && Boolean(RegEmail.value) || true);
     const registration = () => {
       store.dispatch("registrationUser", {email: RegEmail, pas: regPas});
     }
@@ -111,15 +113,16 @@ export default {
     }
     const invalidEmail = computed(() => store.state.invalidEmail);
     const wrongPassword = computed(() => store.state.wrongPassword);
+    const invalidRegEmail = computed(() => store.state.invalidRegEmail);
     return {
       valRules: [
         val => (val && val.length > 0) || 'Заполните поле.'
       ],
       isValidPas: computed(() => {
-       if(regPas.value.length >= 6 || regPas.value === "") {
-         return false;
-       }
-       return true
+        if (regPas.value.length >= 6 || regPas.value === "") {
+          return false;
+        }
+        return true
       }),
       loginEmail,
       loginPas,
@@ -133,7 +136,8 @@ export default {
       disabledLogin,
       disabledReg,
       invalidEmail,
-      wrongPassword
+      wrongPassword,
+      invalidRegEmail
     }
   }
 }
