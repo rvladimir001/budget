@@ -2,9 +2,16 @@
   <router-view />
 </template>
 <script>
-import { defineComponent } from 'vue';
+import {defineComponent, onMounted} from 'vue';
+import {useStore} from "vuex";
 
 export default defineComponent({
-  name: 'App'
+  name: 'App',
+  setup(){
+    const store = useStore();
+    onMounted(() => {
+      store.dispatch("handlerAuthStateChange");
+    });
+  }
 })
 </script>

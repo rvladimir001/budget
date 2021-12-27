@@ -54,6 +54,14 @@
               <div class="q-gutter-y-md column q-mx-auto" style="max-width: 300px">
                 <q-input standout="bg-teal
                 text-white"
+                         v-model="RegName"
+                         label="Логин"
+                         :dense="dense"
+                         lazy-rules
+                         :rules="valRules"
+                />
+                <q-input standout="bg-teal
+                text-white"
                          v-model="RegEmail"
                          label="Почта"
                          :dense="dense"
@@ -101,12 +109,13 @@ export default {
     const store = useStore();
     const loginEmail = ref("");
     const loginPas = ref("");
+    const RegName = ref("");
     const regPas = ref("");
     const RegEmail = ref("");
-    const disabledLogin = computed(() => Boolean(loginEmail.value) && Boolean(loginPas.value) || true);
-    const disabledReg = computed(() => Boolean(regPas.value) && Boolean(RegEmail.value) || true);
+    const disabledLogin = computed(() => loginEmail.value && loginPas.value || true);
+    const disabledReg = computed(() => regPas.value && RegEmail.value && RegName.value || true);
     const registration = () => {
-      store.dispatch("registrationUser", {email: RegEmail, pas: regPas});
+      store.dispatch("registrationUser", {email: RegEmail, name: RegName, pas: regPas});
     }
     const login = () => {
       store.dispatch("loginUser", {email: loginEmail, pas: loginPas});
@@ -126,6 +135,7 @@ export default {
       }),
       loginEmail,
       loginPas,
+      RegName,
       regPas,
       RegEmail,
       isPwd: ref(true),
