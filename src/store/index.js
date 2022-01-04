@@ -39,8 +39,8 @@ export default store(function (/* { ssrContext } */) {
       setInvalidRegEmail: (state, status) => {
         state.invalidRegEmail = status
       },
-      setUserDetails: (state, status) => {
-        state.userDetails = status
+      setUserDetails: (state, user) => {
+        state.userDetails = user
       },
     },
     actions: {
@@ -89,6 +89,7 @@ export default store(function (/* { ssrContext } */) {
             const countRef = ref(firebaseDB, 'users/' + userID);
             onValue(countRef, (snapshot) => {
               const userData = snapshot.val();
+              console.log("handlerAuthStateChange", userData)
               cntx.commit('setUserDetails', {
                 name: userData.name,
                 email: userData.email,

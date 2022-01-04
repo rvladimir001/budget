@@ -26,7 +26,6 @@
         </q-card-section>
       </q-card>
     </div>
-    <div>status - {{status}}</div>
     <AddWaste/>
   </q-page>
 </template>
@@ -56,8 +55,7 @@ export default defineComponent({
       store.commit("setStatusDialogWaste", true);
     };
 
-    onMounted(() => {
-    })
+    onMounted(() => {})
 
     return {
       startingSpendings,

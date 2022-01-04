@@ -1,50 +1,46 @@
 <template>
-  <q-item
-    clickable
-    tag="a"
-    target="_blank"
-    :href="link"
-  >
-    <q-item-section
-      v-if="icon"
-      avatar
-    >
-      <q-icon :name="icon" />
-    </q-item-section>
+  <q-list v-ripple>
 
-    <q-item-section>
-      <q-item-label>{{ title }}</q-item-label>
-      <q-item-label caption>
-        {{ caption }}
-      </q-item-label>
-    </q-item-section>
-  </q-item>
+    <q-item clickable v-ripple>
+      <q-item-section avatar>
+        <q-avatar>
+          <img src="https://cdn.quasar.dev/img/boy-avatar.png">
+        </q-avatar>
+      </q-item-section>
+      <q-item-section>{{ name }}</q-item-section>
+    </q-item>
+
+    <q-item clickable>
+      <q-item-section avatar>
+        <q-icon name="leaderboard"/>
+      </q-item-section>
+      <q-item-section>
+        <q-item-label>Статистика</q-item-label>
+      </q-item-section>
+    </q-item>
+
+    <q-item clickable>
+      <q-item-section avatar>
+        <q-icon name="logout"/>
+      </q-item-section>
+      <q-item-section>
+        <q-item-label>Выход</q-item-label>
+      </q-item-section>
+    </q-item>
+  </q-list>
 </template>
 
 <script>
-import { defineComponent } from 'vue'
+import {computed, defineComponent} from 'vue'
+import {useStore} from "vuex";
 
 export default defineComponent({
   name: 'EssentialLink',
-  props: {
-    title: {
-      type: String,
-      required: true
-    },
-
-    caption: {
-      type: String,
-      default: ''
-    },
-
-    link: {
-      type: String,
-      default: '#'
-    },
-
-    icon: {
-      type: String,
-      default: ''
+    setup() {
+    const store = useStore();
+    const name = computed(() => store.state.userDetails.name)
+    return {
+      name,
     }
   }
 })
