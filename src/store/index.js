@@ -3,7 +3,7 @@ import {createStore} from 'vuex'
 
 import {firebaseDB, firebaseAuth} from 'boot/firebase.js'
 import {ref, set, onValue} from "firebase/database";
-import {createUserWithEmailAndPassword, signInWithEmailAndPassword, onAuthStateChanged} from "firebase/auth";
+import {createUserWithEmailAndPassword, signInWithEmailAndPassword, onAuthStateChanged, signOut} from "firebase/auth";
 
 export default store(function (/* { ssrContext } */) {
   const Store = createStore({
@@ -82,6 +82,13 @@ export default store(function (/* { ssrContext } */) {
             }
           })
       },
+      logoutUser() {
+        signOut(firebaseAuth).then(response => {
+          console.log(response)
+        }).catch((error) => {
+          console.log(error)
+        });
+      },
       handlerAuthStateChange(cntx) {
         onAuthStateChanged(firebaseAuth, (user) => {
           if (user) {
@@ -89,15 +96,16 @@ export default store(function (/* { ssrContext } */) {
             const countRef = ref(firebaseDB, 'users/' + userID);
             onValue(countRef, (snapshot) => {
               const userData = snapshot.val();
-              console.log("handlerAuthStateChange", userData)
               cntx.commit('setUserDetails', {
                 name: userData.name,
                 email: userData.email,
                 id: userID
               })
             });
+            this.$router.push('/')
           } else {
             cntx.commit('setUserDetails', {})
+            this.$router.replace('/login')
           }
         });
 

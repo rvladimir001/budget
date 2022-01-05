@@ -94,7 +94,7 @@ export default defineComponent({
 <style scoped>
 .my-card {
   width: 100%;
-  max-width: 200px;
+  max-width: 150px;
   height: 100px;
 }
 

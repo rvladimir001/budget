@@ -3,6 +3,7 @@
     <q-header class="bg-teal text-center" elevated>
       <q-toolbar>
         <q-btn
+          v-if="name"
           flat
           dense
           round
@@ -14,7 +15,15 @@
         <q-toolbar-title>
           YourBudget
         </q-toolbar-title>
-
+        <q-btn
+          v-if="name"
+          flat
+          dense
+          round
+          icon="logout"
+          aria-label="Menu"
+          @click="logout"
+        />
         <div></div>
       </q-toolbar>
     </q-header>
@@ -25,7 +34,7 @@
       bordered
     >
 
-        <EssentialLink/>
+      <EssentialLink/>
 
     </q-drawer>
 
@@ -43,21 +52,22 @@ import {useStore} from "vuex";
 
 export default defineComponent({
   name: 'MainLayout',
-
   components: {
     EssentialLink
   },
 
   setup() {
     const store = useStore();
-    const leftDrawerOpen = ref(false)
+    const leftDrawerOpen = ref(null)
     const name = computed(() => store.state.userDetails.name)
+    const logout = () => store.dispatch("logoutUser");
     return {
       leftDrawerOpen,
       name,
       toggleLeftDrawer() {
         leftDrawerOpen.value = !leftDrawerOpen.value
-      }
+      },
+      logout
     }
   }
 })
