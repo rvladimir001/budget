@@ -19,6 +19,15 @@
       </q-item-section>
     </q-item>
 
+        <q-item clickable>
+      <q-item-section avatar>
+        <q-icon name="settings"/>
+      </q-item-section>
+      <q-item-section>
+        <q-item-label>Настройки</q-item-label>
+      </q-item-section>
+    </q-item>
+
     <q-item clickable>
       <q-item-section avatar>
         <q-icon name="logout"/>
