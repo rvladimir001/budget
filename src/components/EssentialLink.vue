@@ -1,7 +1,7 @@
 <template>
   <q-list v-ripple>
 
-    <q-item clickable v-ripple>
+    <q-item clickable v-ripple to="/">
       <q-item-section avatar>
         <q-avatar>
           <img src="https://cdn.quasar.dev/img/boy-avatar.png">
@@ -10,7 +10,7 @@
       <q-item-section>{{ name }}</q-item-section>
     </q-item>
 
-    <q-item clickable>
+    <q-item clickable to="/statistics">
       <q-item-section avatar>
         <q-icon name="leaderboard"/>
       </q-item-section>
@@ -19,7 +19,7 @@
       </q-item-section>
     </q-item>
 
-        <q-item clickable>
+    <q-item clickable>
       <q-item-section avatar>
         <q-icon name="settings"/>
       </q-item-section>
@@ -28,7 +28,7 @@
       </q-item-section>
     </q-item>
 
-    <q-item clickable>
+    <q-item clickable @click="logout">
       <q-item-section avatar>
         <q-icon name="logout"/>
       </q-item-section>
@@ -45,10 +45,12 @@ import {useStore} from "vuex";
 
 export default defineComponent({
   name: 'EssentialLink',
-    setup() {
+  setup() {
     const store = useStore();
     const name = computed(() => store.state.userDetails.name)
+    const logout = () => store.dispatch("logoutUser");
     return {
+      logout,
       name,
     }
   }
