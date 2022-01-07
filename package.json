@@ -11,8 +11,10 @@
   },
   "dependencies": {
     "@braks/revue-draggable": "^0.3.7",
+    "@j-t-mcc/vue3-chartjs": "^1.2.0",
     "@quasar/extras": "^1.0.0",
     "axios": "^0.21.1",
+    "chart.js": "^3.7.0",
     "core-js": "^3.6.5",
     "firebase": "^9.6.1",
     "firebaseui": "^6.0.0",
