@@ -67,21 +67,19 @@ export default store(function (/* { ssrContext } */) {
       registrationUser(cntx, user) {
         cntx.commit('setEmailAlreadyInUse', false)
         cntx.commit('setInvalidRegEmail', false)
-        let today = new Date();
-        const dd = String(today.getDate()).padStart(2, '0');
-        const mm = String(today.getMonth() + 1).padStart(2, '0');
-        const yyyy = today.getFullYear();
-        today = dd + '.' + mm + '.' + yyyy;
+        const today = new Date();
         createUserWithEmailAndPassword(firebaseAuth, user.email.value, user.pas.value)
           .then(response => {
             let userID = response.user.uid
-            set(ref(firebaseDB, 'users/' + userID), {
+            set(ref(firebaseDB, `users/${userID}`), {
               name: user.name.value,
               email: user.email.value,
               calculation: 1,
-              creation: today,
+              creation: String(today),
+              archive: false,
               outlays: {
-                update: today,
+                update: String(today),
+                creation: String(today),
                 list: [
                   {
                     name: "Продукты",
@@ -116,9 +114,6 @@ export default store(function (/* { ssrContext } */) {
         cntx.commit('setInvalidEmail', false)
         cntx.commit('setWrongPassword', false)
         signInWithEmailAndPassword(firebaseAuth, user.email.value, user.pas.value)
-          .then(response => {
-            console.log(response)
-          })
           .catch(error => {
             if (error.code === 'auth/invalid-email') {
               cntx.commit('setInvalidEmail', true)
@@ -129,8 +124,7 @@ export default store(function (/* { ssrContext } */) {
           })
       },
       logoutUser() {
-        signOut(firebaseAuth).then(response => {
-          console.log(response)
+        signOut(firebaseAuth).then(() => {
         }).catch((error) => {
           console.log(error)
         });
@@ -143,11 +137,30 @@ export default store(function (/* { ssrContext } */) {
             const countRef = ref(firebaseDB, `users/${userID}`);
             onValue(countRef, (snapshot) => {
               const userData = snapshot.val();
+              const actualYear = new Date().getFullYear()
+              const actualMonth = new Date().getMonth()
+              const creationYear = new Date(userData.outlays.creation).getFullYear()
+              const creationMonth = new Date(userData.outlays.creation).getMonth()
+              if (actualYear > creationYear || (actualYear === creationYear && actualMonth > creationMonth)) {
+                const outlayArchiveRef = ref(firebaseDB, `users/${userID}/archive/${userData.outlays.creation}`);
+                update(outlayArchiveRef, Object.assign({}, userData.outlays))
+                const outlayDateRef = ref(firebaseDB, `users/${userID}/outlays/`);
+                update(outlayDateRef, {
+                  creation: String(new Date())
+                })
+                for ( let key in userData.outlays.list) {
+                  const outlayListRef = ref(firebaseDB, `users/${userID}/outlays/list/${key}`);
+                  update(outlayListRef, {
+                    outlay: 0
+                  })
+                }
+              }
               cntx.commit('setUserDetails', {
                 name: userData.name,
                 email: userData.email,
                 id: userID
               })
+
               cntx.commit('setOutlays', userData.outlays)
             });
             this.$router.push('/')
@@ -162,7 +175,6 @@ export default store(function (/* { ssrContext } */) {
         const countRef = ref(firebaseDB, `users/${user}`);
         onValue(countRef, (snapshot) => {
           const outlaysData = snapshot.val();
-          console.log("outlaysData", outlaysData)
         });
       },
       addCategory(cntx, nameOutlay) {
@@ -179,18 +191,14 @@ export default store(function (/* { ssrContext } */) {
       addOutlay(cntx, newOutlay) {
         const oldValue = Number(newOutlay.currentOutlay.value.outlay.outlay)
         const userID = this.getters.userID
-        let todayUpdate = new Date();
-        const dd = String(todayUpdate.getDate()).padStart(2, '0');
-        const mm = String(todayUpdate.getMonth() + 1).padStart(2, '0');
-        const yyyy = todayUpdate.getFullYear();
-        todayUpdate = dd + '.' + mm + '.' + yyyy;
+        const todayUpdate = new Date();
         const outlayListRef = ref(firebaseDB, `users/${userID}/outlays/list/${newOutlay.currentOutlay.value.key}`);
         update(outlayListRef, {
           outlay: oldValue + Number(newOutlay.value.value)
         }).then(() => {
           const outlayDateRef = ref(firebaseDB, `users/${userID}/outlays/`);
           update(outlayDateRef, {
-            update: todayUpdate
+            update: String(todayUpdate)
           })
         }).then(() => {
           cntx.commit('setStatusDialogWaste', false)

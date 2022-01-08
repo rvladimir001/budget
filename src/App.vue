@@ -11,7 +11,6 @@ export default defineComponent({
     const store = useStore();
     const user = computed(() => store.state.userDetails)
     onMounted(() => {
-      console.log('user', user)
       store.dispatch("handlerAuthStateChange");
     });
   }
