@@ -13,7 +13,7 @@
     </div>
     <div class="q-pa-md row items-start q-gutter-md">
       <q-card
-        v-for="(outlay, key) in outlays"
+        v-for="(outlay, key) in outlays.list"
         v-bind:key="outlay"
         @click="setDialog(outlay, key)"
         class="my-card">

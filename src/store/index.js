@@ -67,30 +67,40 @@ export default store(function (/* { ssrContext } */) {
       registrationUser(cntx, user) {
         cntx.commit('setEmailAlreadyInUse', false)
         cntx.commit('setInvalidRegEmail', false)
+        let today = new Date();
+        const dd = String(today.getDate()).padStart(2, '0');
+        const mm = String(today.getMonth() + 1).padStart(2, '0');
+        const yyyy = today.getFullYear();
+        today = dd + '.' + mm + '.' + yyyy;
         createUserWithEmailAndPassword(firebaseAuth, user.email.value, user.pas.value)
           .then(response => {
             let userID = response.user.uid
             set(ref(firebaseDB, 'users/' + userID), {
               name: user.name.value,
               email: user.email.value,
-              outlays: [
-                {
-                  name: "Продукты",
-                  outlay: 0
-                },
-                {
-                  name: "Транспорт",
-                  outlay: 0
-                },
-                {
-                  name: "Развлечения",
-                  outlay: 0
-                },
-                {
-                  name: "Услуги",
-                  outlay: 0
-                }
-              ]
+              calculation: 1,
+              creation: today,
+              outlays: {
+                update: today,
+                list: [
+                  {
+                    name: "Продукты",
+                    outlay: 0
+                  },
+                  {
+                    name: "Транспорт",
+                    outlay: 0
+                  },
+                  {
+                    name: "Развлечения",
+                    outlay: 0
+                  },
+                  {
+                    name: "Услуги",
+                    outlay: 0
+                  }
+                ]
+              }
             });
           })
           .catch(error => {
@@ -157,7 +167,7 @@ export default store(function (/* { ssrContext } */) {
       },
       addCategory(cntx, nameOutlay) {
         const userID = this.getters.userID
-        const outlayListRef = ref(firebaseDB, `users/${userID}/outlays`);
+        const outlayListRef = ref(firebaseDB, `users/${userID}/outlays/list`);
         const newOutlayRef = push(outlayListRef);
         set(newOutlayRef, {
           name: nameOutlay,
@@ -169,9 +179,19 @@ export default store(function (/* { ssrContext } */) {
       addOutlay(cntx, newOutlay) {
         const oldValue = Number(newOutlay.currentOutlay.value.outlay.outlay)
         const userID = this.getters.userID
-        const outlayListRef = ref(firebaseDB, `users/${userID}/outlays/${newOutlay.currentOutlay.value.key}`);
+        let todayUpdate = new Date();
+        const dd = String(todayUpdate.getDate()).padStart(2, '0');
+        const mm = String(todayUpdate.getMonth() + 1).padStart(2, '0');
+        const yyyy = todayUpdate.getFullYear();
+        todayUpdate = dd + '.' + mm + '.' + yyyy;
+        const outlayListRef = ref(firebaseDB, `users/${userID}/outlays/list/${newOutlay.currentOutlay.value.key}`);
         update(outlayListRef, {
           outlay: oldValue + Number(newOutlay.value.value)
+        }).then(() => {
+          const outlayDateRef = ref(firebaseDB, `users/${userID}/outlays/`);
+          update(outlayDateRef, {
+            update: todayUpdate
+          })
         }).then(() => {
           cntx.commit('setStatusDialogWaste', false)
         })
