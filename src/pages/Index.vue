@@ -6,10 +6,12 @@
       @drop="onDrop"
     >
       <img
+        @click="addBalance()"
         draggable="true"
         @dragstart="onDragStart"
         class="banknotes"
-        src="~assets/banknotes.png" alt="" style="height: 80px">
+        src="~assets/purse.png" alt="" style="height: 80px">
+      <div class="text-secondary" style="font-size: 24px">{{outlays.balance}}</div>
     </div>
     <div class="q-pa-md row items-start q-gutter-md">
       <template
@@ -43,6 +45,7 @@
       </q-card>
     </div>
     <AddOutlay/>
+    <AddBalance/>
   </q-page>
 </template>
 
@@ -50,11 +53,12 @@
 import {defineComponent, computed, onMounted} from 'vue';
 import {useStore} from "vuex";
 import AddOutlay from 'components/AddOutlay.vue'
+import AddBalance from "components/AddBalance";
 
 
 export default defineComponent({
   name: 'PageIndex',
-  components: {AddOutlay},
+  components: {AddBalance, AddOutlay},
   setup() {
     const store = useStore();
     const setDialog = (outlay, key) => {
@@ -64,14 +68,20 @@ export default defineComponent({
     const openAddCategoryDialog = () => {
       store.commit("setStatusDialogAddCategory", true);
     }
+    const addBalance =() => {
+      store.commit("setStatusDialogBalance", true);
+    }
     const outlays = computed(() => store.state.outlays);
+    const balance = computed(() => store.state.balance);
     onMounted(() => {
       // store.dispatch("getOutlays")
     })
     return {
       outlays,
+      balance,
       setDialog,
       openAddCategoryDialog,
+      addBalance,
       // store the id of the draggable element
       onDragStart(e) {
         console.log("e.target.id", e)

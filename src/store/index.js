@@ -10,6 +10,7 @@ export default store(function (/* { ssrContext } */) {
     state: {
       statusDialogWaste: false,
       statusDialogCategory: false,
+      statusDialogBalance: false,
       delCategory: null,
       invalidEmail: false,
       wrongPassword: false,
@@ -18,11 +19,12 @@ export default store(function (/* { ssrContext } */) {
       userID: null,
       userDetails: {},
       outlays: [],
-      currentOutlay: {}
+      currentOutlay: {},
     },
     getters: {
       statusDialogWaste: (state) => state.statusDialogWaste,
       statusDialogCategory: (state) => state.statusDialogCategory,
+      statusDialogBalance: (state) => state.statusDialogBalance,
       delCategory: (state) => state.delCategory,
       invalidEmail: (state) => state.invalidEmail,
       wrongPassword: (state) => state.wrongPassword,
@@ -39,6 +41,9 @@ export default store(function (/* { ssrContext } */) {
       },
       setStatusDialogAddCategory: (state, status) => {
         state.statusDialogCategory = status
+      },
+      setStatusDialogBalance: (state, status) => {
+        state.statusDialogBalance = status
       },
       setDelCategory: (state, status) => {
         state.delCategory = status
@@ -66,7 +71,7 @@ export default store(function (/* { ssrContext } */) {
       },
       setCurrentOutlay: (state, currentOutlay) => {
         state.currentOutlay = currentOutlay
-      }
+      },
     },
     actions: {
       registrationUser(cntx, user) {
@@ -85,6 +90,8 @@ export default store(function (/* { ssrContext } */) {
               outlays: {
                 update: String(today),
                 creation: String(today),
+                balance: 0,
+                countBalance: 0,
                 list: [
                   {
                     name: "Продукты",
@@ -169,7 +176,6 @@ export default store(function (/* { ssrContext } */) {
                 email: userData.email,
                 id: userID
               })
-
               cntx.commit('setOutlays', userData.outlays)
             });
             this.$router.push('/')
@@ -207,11 +213,18 @@ export default store(function (/* { ssrContext } */) {
       },
       addOutlay(cntx, newOutlay) {
         const oldValue = Number(newOutlay.currentOutlay.value.outlay.outlay)
+        const oldBalance = this.getters.outlays.balance
         const userID = this.getters.userID
         const todayUpdate = new Date();
         const outlayListRef = ref(firebaseDB, `users/${userID}/outlays/list/${newOutlay.currentOutlay.value.key}`);
         update(outlayListRef, {
           outlay: oldValue + Number(newOutlay.value.value)
+        }).then(() => {
+          const oldBalance = this.getters.outlays.balance
+          const outlayDateRef = ref(firebaseDB, `users/${userID}/outlays/`);
+          update(outlayDateRef, {
+            balance: Number(oldBalance) - Number(newOutlay.value.value),
+          })
         }).then(() => {
           const outlayDateRef = ref(firebaseDB, `users/${userID}/outlays/`);
           update(outlayDateRef, {
@@ -219,6 +232,15 @@ export default store(function (/* { ssrContext } */) {
           })
         }).then(() => {
           cntx.commit('setStatusDialogWaste', false)
+        })
+      },
+      addBalance(cntx, newMany) {
+        const userID = this.getters.userID
+        const oldBalance = this.getters.outlays.balance
+        const outlayDateRef = ref(firebaseDB, `users/${userID}/outlays/`);
+        update(outlayDateRef, {
+          balance: Number(oldBalance) + Number(newMany),
+          countBalance: Number(oldBalance) + Number(newMany)
         })
       }
     },
