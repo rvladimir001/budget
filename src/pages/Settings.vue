@@ -9,28 +9,31 @@
           <q-item-label lines="1">{{ outlay.name }}</q-item-label>
         </q-item-section>
         <q-item-section side>
-          <q-icon @click="openDelDialog" class="delete" name="delete" color="red"/>
+          <q-icon @click="openDelDialog({key: key, name: outlay.name})" class="delete" name="delete" color="red"/>
         </q-item-section>
       </q-item>
     </q-list>
     <q-btn class="glossy" color="teal" icon="add" @click="openAddCategoryDialog()"/>
   </div>
+  <DelCategory/>
 </template>
 
 <script>
 import {computed} from "vue";
 import {useStore} from "vuex";
+import DelCategory from 'components/DelCategory.vue'
 
 export default {
   name: "Settings",
+  components: {DelCategory},
   setup(){
     const store = useStore();
     const outlays = computed(() => store.state.outlays);
     const openAddCategoryDialog = () => {
       store.commit("setStatusDialogAddCategory", true);
     }
-    const openDelDialog = () => {
-      store.commit("setStatusDialogDelCategory", true);
+    const openDelDialog = (category) => {
+      store.commit("setDelCategory", category);
     }
     return {
       outlays,

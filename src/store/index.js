@@ -10,7 +10,7 @@ export default store(function (/* { ssrContext } */) {
     state: {
       statusDialogWaste: false,
       statusDialogCategory: false,
-      statusDialogDelCategory: false,
+      delCategory: null,
       invalidEmail: false,
       wrongPassword: false,
       emailAlreadyInUse: false,
@@ -23,7 +23,7 @@ export default store(function (/* { ssrContext } */) {
     getters: {
       statusDialogWaste: (state) => state.statusDialogWaste,
       statusDialogCategory: (state) => state.statusDialogCategory,
-      statusDialogDelCategory: (state) => state.statusDialogDelCategory,
+      delCategory: (state) => state.delCategory,
       invalidEmail: (state) => state.invalidEmail,
       wrongPassword: (state) => state.wrongPassword,
       emailAlreadyInUse: (state) => state.emailAlreadyInUse,
@@ -40,8 +40,8 @@ export default store(function (/* { ssrContext } */) {
       setStatusDialogAddCategory: (state, status) => {
         state.statusDialogCategory = status
       },
-      setStatusDialogDelCategory: (state, status) => {
-        state.statusDialogDelCategory = status
+      setDelCategory: (state, status) => {
+        state.delCategory = status
       },
       setInvalidEmail: (state, status) => {
         state.invalidEmail = status
@@ -157,7 +157,7 @@ export default store(function (/* { ssrContext } */) {
                 update(outlayDateRef, {
                   creation: String(new Date())
                 })
-                for ( let key in userData.outlays.list) {
+                for (let key in userData.outlays.list) {
                   const outlayListRef = ref(firebaseDB, `users/${userID}/outlays/list/${key}`);
                   update(outlayListRef, {
                     outlay: 0
@@ -179,13 +179,6 @@ export default store(function (/* { ssrContext } */) {
           }
         });
       },
-      // getOutlays(cntx) {
-      //   const user = this.getters.userID
-      //   const countRef = ref(firebaseDB, `users/${user}`);
-      //   onValue(countRef, (snapshot) => {
-      //     const outlaysData = snapshot.val();
-      //   });
-      // },
       addCategory(cntx, nameOutlay) {
         const userID = this.getters.userID
         const outlayListRef = ref(firebaseDB, `users/${userID}/outlays/list`);
@@ -195,6 +188,22 @@ export default store(function (/* { ssrContext } */) {
           outlay: 0
         }).then(() => {
           cntx.commit('setStatusDialogAddCategory', false)
+        })
+      },
+      delCategory(cntx, key) {
+        const userID = this.getters.userID
+        const todayUpdate = new Date();
+        console.log("key", key)
+        const outlayListRef = ref(firebaseDB, `users/${userID}/outlays/list/${key}`);
+        update(outlayListRef, {
+          deleted: true
+        }).then(() => {
+          const outlayDateRef = ref(firebaseDB, `users/${userID}/outlays/`);
+          update(outlayDateRef, {
+            update: String(todayUpdate)
+          })
+        }).then(() => {
+          cntx.commit('setStatusDialogWaste', false)
         })
       },
       addOutlay(cntx, newOutlay) {
