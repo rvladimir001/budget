@@ -6,11 +6,15 @@
           <div class="text-h6">Категория</div>
         </q-card-section>
         <q-card-section class="q-pt-none">
-          <q-input dense v-model="category" autofocus @keyup.enter="prompt = false"/>
+          <q-input
+            v-model="category"
+            :rules="rules"
+            :dense="dense"
+            autofocus @keyup.enter="prompt = false"/>
         </q-card-section>
         <q-card-actions align="right" class="text-secondary">
           <q-btn flat label="Отмена" @click="setDialog(false)" v-close-popup/>
-          <q-btn flat label="Сохранить" @click="add()" v-close-popup/>
+          <q-btn flat label="Сохранить" @click="add()" v-close-popup :disable="statusButtonSave"/>
         </q-card-actions>
       </q-card>
     </q-dialog>
@@ -33,8 +37,14 @@ export default {
     const add = () => {
       store.dispatch("addCategory", category.value)
     }
+    const statusButtonSave = computed(() => category.value<=0);
     return {
       prompt: ref(false),
+      rules: [
+        val => !!val || 'Заполните поле!',
+      ],
+      dense: ref(false),
+      statusButtonSave,
       category,
       add,
       status,

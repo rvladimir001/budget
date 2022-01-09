@@ -162,7 +162,8 @@ export default store(function (/* { ssrContext } */) {
                 update(outlayArchiveRef, Object.assign({}, userData.outlays))
                 const outlayDateRef = ref(firebaseDB, `users/${userID}/outlays/`);
                 update(outlayDateRef, {
-                  creation: String(new Date())
+                  creation: String(new Date()),
+                  countBalance: 0
                 })
                 for (let key in userData.outlays.list) {
                   const outlayListRef = ref(firebaseDB, `users/${userID}/outlays/list/${key}`);

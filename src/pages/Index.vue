@@ -72,13 +72,11 @@ export default defineComponent({
       store.commit("setStatusDialogBalance", true);
     }
     const outlays = computed(() => store.state.outlays);
-    const balance = computed(() => store.state.balance);
     onMounted(() => {
       // store.dispatch("getOutlays")
     })
     return {
       outlays,
-      balance,
       setDialog,
       openAddCategoryDialog,
       addBalance,
@@ -117,6 +115,7 @@ export default defineComponent({
   width: 100%;
   max-width: 150px;
   height: 100px;
+  cursor: pointer;
 }
 
 .drop-target {
