@@ -193,7 +193,6 @@ export default store(function (/* { ssrContext } */) {
       delCategory(cntx, key) {
         const userID = this.getters.userID
         const todayUpdate = new Date();
-        console.log("key", key)
         const outlayListRef = ref(firebaseDB, `users/${userID}/outlays/list/${key}`);
         update(outlayListRef, {
           deleted: true

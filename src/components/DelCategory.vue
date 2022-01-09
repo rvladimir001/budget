@@ -31,6 +31,7 @@ export default {
     };
     const deleteCategory = () => {
       store.dispatch("delCategory", category.value.key)
+      setDialog(false)
     }
     return {
       currentOutlay,

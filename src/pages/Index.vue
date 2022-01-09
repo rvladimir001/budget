@@ -12,20 +12,23 @@
         src="~assets/banknotes.png" alt="" style="height: 80px">
     </div>
     <div class="q-pa-md row items-start q-gutter-md">
-      <q-card
+      <template
         v-for="(outlay, key) in outlays.list"
-        v-bind:key="outlay"
-        @click="setDialog(outlay, key)"
-        class="my-card">
-        <q-card-section
-          @dragover="onDragOver"
-          @drop="onDrop(outlay.name)"
-          :id="outlay.name"
-        >
-          <div class="text-h6">{{ outlay.name }}</div>
-          <div class="text-subtitle2">{{ outlay.outlay }}</div>
-        </q-card-section>
-      </q-card>
+        v-bind:key="outlay">
+        <q-card
+          v-if="!outlay.deleted"
+          @click="setDialog(outlay, key)"
+          class="my-card">
+          <q-card-section
+            @dragover="onDragOver"
+            @drop="onDrop(outlay.name)"
+            :id="outlay.name"
+          >
+            <div class="text-h6">{{ outlay.name }}</div>
+            <div class="text-subtitle2">{{ outlay.outlay }}</div>
+          </q-card-section>
+        </q-card>
+      </template>
       <q-card
         @click="openAddCategoryDialog()"
         class="my-card">
