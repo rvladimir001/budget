@@ -8,7 +8,7 @@
         <q-card-section class="q-pt-none">
           <q-input type="number" dense v-model="waste" autofocus @keyup.enter="prompt = false"/>
         </q-card-section>
-        <q-card-actions align="right" class="text-primary">
+        <q-card-actions align="right" class="text-secondary">
           <q-btn flat label="Отмена" @click="setDialog(false)" v-close-popup/>
           <q-btn flat label="Внести" @click="add" v-close-popup/>
         </q-card-actions>

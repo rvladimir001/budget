@@ -37,7 +37,7 @@
           @drop="onDrop()"
         >
           <div class="text-h3">
-            <span class="material-icons">add_circle_outline</span>
+            <span class="material-icons text-secondary">add_circle_outline</span>
           </div>
         </q-card-section>
       </q-card>

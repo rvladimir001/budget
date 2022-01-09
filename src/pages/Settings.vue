@@ -16,14 +16,31 @@
           </q-item-section>
         </q-item>
       </template>
+      <q-item>
+        <q-item-section>
+          <q-item-label lines="1">
+            <q-btn class="glossy" color="teal" icon="add" @click="openAddCategoryDialog()"/>
+          </q-item-label>
+        </q-item-section>
+      </q-item>
     </q-list>
-    <q-btn class="glossy" color="teal" icon="add" @click="openAddCategoryDialog()"/>
+<!--    <div class="q-pa-md q-gutter-md q-mx-auto" style="max-width: 350px">-->
+<!--      <q-toggle-->
+<!--        v-model="autoСompletion"-->
+<!--        checked-icon="check"-->
+<!--        color="secondary"-->
+<!--        label="Автопополнение"-->
+<!--        unchecked-icon="clear"-->
+<!--      />-->
+<!--      <q-input type="number" autofocus dense :disable="!autoСompletion"/>-->
+<!--    </div>-->
+
   </div>
   <DelCategory/>
 </template>
 
 <script>
-import {computed} from "vue";
+import {computed, ref} from "vue";
 import {useStore} from "vuex";
 import DelCategory from 'components/DelCategory.vue'
 
@@ -32,6 +49,7 @@ export default {
   components: {DelCategory},
   setup() {
     const store = useStore();
+    const autoСompletion = ref(false)
     const outlays = computed(() => store.state.outlays);
     const openAddCategoryDialog = () => {
       store.commit("setStatusDialogAddCategory", true);
@@ -42,7 +60,8 @@ export default {
     return {
       outlays,
       openAddCategoryDialog,
-      openDelDialog
+      openDelDialog,
+      autoСompletion
     }
   }
 }
