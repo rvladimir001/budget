@@ -1,0 +1,51 @@
+<template>
+  <div class="q-pa-md q-gutter-md q-mx-auto">
+    <q-list bordered separator padding class="rounded-borders q-mx-auto" style="max-width: 350px">
+      <q-item
+        v-for="(outlay, key) in outlays.list"
+        v-bind:key="key"
+      >
+        <q-item-section>
+          <q-item-label lines="1">{{ outlay.name }}</q-item-label>
+        </q-item-section>
+        <q-item-section side>
+          <q-icon @click="openDelDialog" class="delete" name="delete" color="red"/>
+        </q-item-section>
+      </q-item>
+    </q-list>
+    <q-btn class="glossy" color="teal" icon="add" @click="openAddCategoryDialog()"/>
+  </div>
+</template>
+
+<script>
+import {computed} from "vue";
+import {useStore} from "vuex";
+
+export default {
+  name: "Settings",
+  setup(){
+    const store = useStore();
+    const outlays = computed(() => store.state.outlays);
+    const openAddCategoryDialog = () => {
+      store.commit("setStatusDialogAddCategory", true);
+    }
+    const openDelDialog = () => {
+      store.commit("setStatusDialogDelCategory", true);
+    }
+    return {
+      outlays,
+      openAddCategoryDialog,
+      openDelDialog
+    }
+  }
+}
+</script>
+
+<style scoped>
+.delete {
+  cursor: pointer;
+}
+.plus {
+  font-size: 36px;
+}
+</style>

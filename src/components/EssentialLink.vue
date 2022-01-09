@@ -19,7 +19,7 @@
       </q-item-section>
     </q-item>
 
-    <q-item clickable>
+    <q-item clickable to="/settings">
       <q-item-section avatar>
         <q-icon name="settings"/>
       </q-item-section>

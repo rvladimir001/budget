@@ -10,6 +10,7 @@ export default store(function (/* { ssrContext } */) {
     state: {
       statusDialogWaste: false,
       statusDialogCategory: false,
+      statusDialogDelCategory: false,
       invalidEmail: false,
       wrongPassword: false,
       emailAlreadyInUse: false,
@@ -22,6 +23,7 @@ export default store(function (/* { ssrContext } */) {
     getters: {
       statusDialogWaste: (state) => state.statusDialogWaste,
       statusDialogCategory: (state) => state.statusDialogCategory,
+      statusDialogDelCategory: (state) => state.statusDialogDelCategory,
       invalidEmail: (state) => state.invalidEmail,
       wrongPassword: (state) => state.wrongPassword,
       emailAlreadyInUse: (state) => state.emailAlreadyInUse,
@@ -37,6 +39,9 @@ export default store(function (/* { ssrContext } */) {
       },
       setStatusDialogAddCategory: (state, status) => {
         state.statusDialogCategory = status
+      },
+      setStatusDialogDelCategory: (state, status) => {
+        state.statusDialogDelCategory = status
       },
       setInvalidEmail: (state, status) => {
         state.invalidEmail = status
@@ -83,19 +88,23 @@ export default store(function (/* { ssrContext } */) {
                 list: [
                   {
                     name: "Продукты",
-                    outlay: 0
+                    outlay: 0,
+                    deleted: false
                   },
                   {
                     name: "Транспорт",
-                    outlay: 0
+                    outlay: 0,
+                    deleted: false
                   },
                   {
                     name: "Развлечения",
-                    outlay: 0
+                    outlay: 0,
+                    deleted: false
                   },
                   {
                     name: "Услуги",
-                    outlay: 0
+                    outlay: 0,
+                    deleted: false
                   }
                 ]
               }
@@ -170,13 +179,13 @@ export default store(function (/* { ssrContext } */) {
           }
         });
       },
-      getOutlays(cntx) {
-        const user = this.getters.userID
-        const countRef = ref(firebaseDB, `users/${user}`);
-        onValue(countRef, (snapshot) => {
-          const outlaysData = snapshot.val();
-        });
-      },
+      // getOutlays(cntx) {
+      //   const user = this.getters.userID
+      //   const countRef = ref(firebaseDB, `users/${user}`);
+      //   onValue(countRef, (snapshot) => {
+      //     const outlaysData = snapshot.val();
+      //   });
+      // },
       addCategory(cntx, nameOutlay) {
         const userID = this.getters.userID
         const outlayListRef = ref(firebaseDB, `users/${userID}/outlays/list`);

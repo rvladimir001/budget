@@ -27,7 +27,7 @@
         </q-card-section>
       </q-card>
       <q-card
-        @click="openAddCategoryDialog(true)"
+        @click="openAddCategoryDialog()"
         class="my-card">
         <q-card-section
           @dragover="onDragOver"
@@ -40,7 +40,6 @@
       </q-card>
     </div>
     <AddOutlay/>
-    <AddCategory/>
   </q-page>
 </template>
 
@@ -48,11 +47,11 @@
 import {defineComponent, computed, onMounted} from 'vue';
 import {useStore} from "vuex";
 import AddOutlay from 'components/AddOutlay.vue'
-import AddCategory from '../components/AddCategory.vue'
+
 
 export default defineComponent({
   name: 'PageIndex',
-  components: {AddOutlay, AddCategory},
+  components: {AddOutlay},
   setup() {
     const store = useStore();
     const setDialog = (outlay, key) => {
