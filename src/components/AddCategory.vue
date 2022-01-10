@@ -10,7 +10,24 @@
             v-model="category"
             :rules="rules"
             :dense="dense"
+            lazy-rules
             autofocus @keyup.enter="prompt = false"/>
+
+          <div class="q-pa-md">
+            <div style="display: flex">
+              <div style="width: 20px; height: 20px; margin: 5px" :style="{ background:  color}"></div>
+              <div style=" align-self: center;">Цвет отображения категории</div>
+            </div>
+
+            <q-color
+              no-header
+              no-footer
+              v-model="color"
+              default-view="palette"
+              :palette="actualPallets"
+              class="my-picker"
+            />
+          </div>
         </q-card-section>
         <q-card-actions align="right" class="text-secondary">
           <q-btn flat label="Отмена" @click="setDialog(false)" v-close-popup/>
@@ -30,16 +47,20 @@ export default {
   setup() {
     const store = useStore();
     const status = computed(() => store.state.statusDialogCategory);
+    const actualPallets = computed(() => store.getters.actualPallets);
     let category = ref("");
+    let color = ref("#019A9D")
     const setDialog = (status) => {
       store.commit("setStatusDialogAddCategory", status);
     };
     const add = () => {
-      store.dispatch("addCategory", category.value)
+      store.dispatch("addCategory", {category: category.value, color: color.value})
     }
-    const statusButtonSave = computed(() => category.value<=0);
+    const statusButtonSave = computed(() => category.value <= 0);
     return {
       prompt: ref(false),
+      color,
+      actualPallets,
       rules: [
         val => !!val || 'Заполните поле!',
       ],

@@ -28,6 +28,7 @@
           >
             <div class="text-h6">{{ outlay.name }}</div>
             <div class="text-subtitle2">{{ outlay.outlay }}</div>
+            <div class="box-color" :style="{background: outlay.color}"></div>
           </q-card-section>
         </q-card>
       </template>
@@ -153,7 +154,10 @@ export default defineComponent({
 .box:nth-child(3) {
   clear: both;
 }
-
+.box-color {
+ width: 15px;
+  height: 15px;
+}
 .banknotes {
   cursor: pointer;
 }
