@@ -18,7 +18,7 @@
           <q-tab-panel name="login">
             <div>
               <div class="q-gutter-y-md column q-mx-auto" style="max-width: 300px">
-                <q-input standout="bg-teal text-white"
+                <q-input
                          v-model="loginEmail"
                          label="Почта"
                          :dense="dense"
@@ -27,7 +27,7 @@
                          lazy-rules
                          :rules="valRules"
                 />
-                <q-input standout="bg-teal text-white"
+                <q-input
                          v-model="loginPas"
                          label="Пароль"
                          :dense="dense"
