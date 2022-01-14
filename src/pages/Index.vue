@@ -5,18 +5,25 @@
       @dragover="onDragOver"
       @drop="onDrop"
     >
+      <div class="many-block">
+      <img
+        src="~assets/purse.png" alt="" style="height: 80px">
       <img
         @click="addBalance()"
         draggable="true"
         @dragstart="onDragStart"
         class="banknotes"
-        src="~assets/purse.png" alt="" style="height: 80px">
-      <div class="text-secondary" style="font-size: 24px">{{outlays.balance}}</div>
+        :style="{opacity: showMany}"
+        src="~assets/banknotes.png" alt="" style="height: 80px">
+        </div>
+      <div class="text-secondary" style="font-size: 24px">{{ outlays.balance }}</div>
     </div>
     <div class="q-pa-md row items-start q-gutter-md">
       <template
         v-for="(outlay, key) in outlays.list"
-        v-bind:key="outlay">
+        v-bind:key="outlay"
+      style="display: flex;"
+      >
         <q-card
           v-if="!outlay.deleted"
           @click="setDialog(outlay, key)"
@@ -62,6 +69,7 @@ export default defineComponent({
   components: {AddBalance, AddOutlay},
   setup() {
     const store = useStore();
+    let showMany = "none"
     const setDialog = (outlay, key) => {
       store.commit("setCurrentOutlay", {outlay: outlay, key: key});
       store.commit("setStatusDialogWaste", true);
@@ -69,7 +77,7 @@ export default defineComponent({
     const openAddCategoryDialog = () => {
       store.commit("setStatusDialogAddCategory", true);
     }
-    const addBalance =() => {
+    const addBalance = () => {
       store.commit("setStatusDialogBalance", true);
     }
     const outlays = computed(() => store.state.outlays);
@@ -81,11 +89,12 @@ export default defineComponent({
       setDialog,
       openAddCategoryDialog,
       addBalance,
+      showMany,
       // store the id of the draggable element
       onDragStart(e) {
-        console.log("e.target.id", e)
+        showMany = "1"
         e.dataTransfer.setData('text', e.target.id)
-        // e.dataTransfer.dropEffect = 'move'
+        e.dataTransfer.dropEffect = 'move'
       },
 
       onDragEnter(e) {
@@ -104,8 +113,11 @@ export default defineComponent({
       },
 
       onDrop(category) {
-        console.log("category", category);
-        setDialog();
+        Object.keys(outlays.value.list).forEach((key, element)=> {
+          if(category === outlays.value.list[key].name){
+            setDialog(outlays.value.list[key], key);
+          }
+        })
       }
     }
   }
@@ -154,12 +166,23 @@ export default defineComponent({
 .box:nth-child(3) {
   clear: both;
 }
+
 .box-color {
- width: 15px;
+  width: 15px;
   height: 15px;
+}
+
+
+
+.many-block {
+  position: relative;
+
 }
 .banknotes {
   cursor: pointer;
+  position: absolute;
+  margin-left: -90px;
+  opacity: 0;
 }
 
 </style>

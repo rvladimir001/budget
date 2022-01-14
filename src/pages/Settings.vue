@@ -1,6 +1,6 @@
 <template>
   <div class="q-pa-md q-gutter-md q-mx-auto">
-    <q-list bordered separator padding class="rounded-borders q-mx-auto" style="max-width: 350px">
+    <q-list separator padding class="rounded-borders q-mx-auto" style="max-width: 350px">
       <template
         v-for="(outlay, key) in outlays.list"
         v-bind:key="key"
@@ -11,6 +11,9 @@
           <q-item-section>
             <q-item-label lines="1">{{ outlay.name }}</q-item-label>
           </q-item-section>
+          <q-item-section side>
+            <q-icon @click="openDelDialog({key: key, name: outlay.name})" class="edit" name="edit" color="secondary"/>
+            </q-item-section>
           <q-item-section side>
             <q-icon @click="openDelDialog({key: key, name: outlay.name})" class="delete" name="delete" color="red"/>
           </q-item-section>
@@ -68,7 +71,7 @@ export default {
 </script>
 
 <style scoped>
-.delete {
+.delete, .edit {
   cursor: pointer;
 }
 
