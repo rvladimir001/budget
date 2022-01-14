@@ -47,7 +47,7 @@
 <script>
 import EssentialLink from 'components/EssentialLink.vue'
 
-import {computed, defineComponent, ref} from 'vue'
+import {computed, defineComponent, ref, watch} from 'vue'
 import {useStore} from "vuex";
 
 export default defineComponent({
@@ -58,9 +58,12 @@ export default defineComponent({
 
   setup() {
     const store = useStore();
-    const leftDrawerOpen = ref(null)
+    let leftDrawerOpen = ref(false)
     const name = computed(() => store.state.userDetails.name)
-    const logout = () => store.dispatch("logoutUser");
+    const logout = () => {
+      leftDrawerOpen.value = false
+      store.dispatch("logoutUser")
+    };
     return {
       leftDrawerOpen,
       name,

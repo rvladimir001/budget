@@ -1,5 +1,5 @@
 <template>
-  <q-list v-ripple>
+  <q-list v-ripple v-if="name">
 
     <q-item clickable v-ripple to="/">
       <q-item-section avatar>
