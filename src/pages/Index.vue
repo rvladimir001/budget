@@ -18,7 +18,7 @@
         </div>
       <div class="text-secondary" style="font-size: 24px">{{ outlays.balance }}</div>
     </div>
-    <div class="q-pa-md row items-start q-gutter-md">
+    <div class="q-pa-md row items-start q-gutter-md justify-center">
       <template
         v-for="(outlay, key) in outlays.list"
         v-bind:key="outlay"
