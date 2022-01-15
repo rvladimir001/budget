@@ -13,7 +13,7 @@
         />
 
         <q-toolbar-title>
-          YourBudget
+          Расходы
         </q-toolbar-title>
         <q-btn
           v-if="name"
@@ -46,8 +46,7 @@
 
 <script>
 import EssentialLink from 'components/EssentialLink.vue'
-
-import {computed, defineComponent, ref, watch} from 'vue'
+import {computed, defineComponent, ref} from 'vue'
 import {useStore} from "vuex";
 
 export default defineComponent({
@@ -55,21 +54,21 @@ export default defineComponent({
   components: {
     EssentialLink
   },
-
   setup() {
     const store = useStore();
-    let leftDrawerOpen = ref(false)
-    const name = computed(() => store.state.userDetails.name)
+    let leftDrawerOpen = ref(false);
+    const name = computed(() => store.state.userDetails.name);
+    const toggleLeftDrawer = () => {
+      leftDrawerOpen.value = !leftDrawerOpen.value;
+    };
     const logout = () => {
-      leftDrawerOpen.value = false
-      store.dispatch("logoutUser")
+      leftDrawerOpen.value = false;
+      store.dispatch("logoutUser");
     };
     return {
       leftDrawerOpen,
       name,
-      toggleLeftDrawer() {
-        leftDrawerOpen.value = !leftDrawerOpen.value
-      },
+      toggleLeftDrawer,
       logout
     }
   }
