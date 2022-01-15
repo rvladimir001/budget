@@ -1,6 +1,5 @@
 <template>
-  <q-list v-ripple v-if="name">
-
+  <q-list v-ripple>
     <q-item clickable v-ripple to="/">
       <q-item-section avatar>
         <q-avatar>
@@ -9,7 +8,6 @@
       </q-item-section>
       <q-item-section>{{ name }}</q-item-section>
     </q-item>
-
     <q-item clickable to="/statistics">
       <q-item-section avatar>
         <q-icon name="leaderboard"/>
@@ -18,7 +16,6 @@
         <q-item-label>Статистика</q-item-label>
       </q-item-section>
     </q-item>
-
     <q-item clickable to="/settings">
       <q-item-section avatar>
         <q-icon name="settings"/>
@@ -27,7 +24,6 @@
         <q-item-label>Настройки</q-item-label>
       </q-item-section>
     </q-item>
-
     <q-item clickable @click="logout">
       <q-item-section avatar>
         <q-icon name="logout"/>
@@ -38,7 +34,6 @@
     </q-item>
   </q-list>
 </template>
-
 <script>
 import {computed, defineComponent} from 'vue'
 import {useStore} from "vuex";

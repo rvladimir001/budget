@@ -13,7 +13,7 @@
         />
 
         <q-toolbar-title>
-          Расходы
+          Мои расходы
         </q-toolbar-title>
         <q-btn
           v-if="name"
@@ -29,6 +29,7 @@
     </q-header>
 
     <q-drawer
+      v-if="name"
       v-model="leftDrawerOpen"
       show-if-above
       bordered

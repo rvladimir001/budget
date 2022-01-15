@@ -52,17 +52,13 @@
           <q-tab-panel name="registration" class="bg-teal-1">
             <div class="q-pa-md">
               <div class="q-gutter-y-md column q-mx-auto" style="max-width: 300px">
-                <q-input standout="bg-teal
-                text-white"
-                         v-model="RegName"
+                <q-input v-model="RegName"
                          label="Логин"
                          :dense="dense"
                          lazy-rules
                          :rules="valRules"
                 />
-                <q-input standout="bg-teal
-                text-white"
-                         v-model="RegEmail"
+                <q-input v-model="RegEmail"
                          label="Почта"
                          :dense="dense"
                          error-message="Некорректно указана почта."
@@ -70,8 +66,7 @@
                          lazy-rules
                          :rules="valRules"
                 />
-                <q-input standout="bg-teal text-white"
-                         v-model="regPas"
+                <q-input v-model="regPas"
                          label="Пароль"
                          :dense="dense"
                          :type="isPwd ? 'password' : 'text'"
