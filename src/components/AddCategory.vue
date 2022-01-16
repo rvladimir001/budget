@@ -3,7 +3,7 @@
     <q-dialog v-model="status" persistent>
       <q-card style="min-width: 350px">
         <q-card-section>
-          <div class="text-h6">Категория</div>
+          <div class="text-h6 text-secondary">Категория</div>
         </q-card-section>
         <q-card-section class="q-pt-none">
           <q-input

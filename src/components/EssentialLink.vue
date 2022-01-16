@@ -6,9 +6,9 @@
           <img src="https://cdn.quasar.dev/img/boy-avatar.png">
         </q-avatar>
       </q-item-section>
-      <q-item-section>{{ name }}</q-item-section>
+      <q-item-section class="text-secondary">{{ name }}</q-item-section>
     </q-item>
-    <q-item clickable to="/statistics">
+    <q-item clickable to="/statistics" class="text-secondary">
       <q-item-section avatar>
         <q-icon name="leaderboard"/>
       </q-item-section>
@@ -16,7 +16,7 @@
         <q-item-label>Статистика</q-item-label>
       </q-item-section>
     </q-item>
-    <q-item clickable to="/settings">
+    <q-item clickable to="/settings" class="text-secondary">
       <q-item-section avatar>
         <q-icon name="settings"/>
       </q-item-section>
@@ -24,7 +24,7 @@
         <q-item-label>Настройки</q-item-label>
       </q-item-section>
     </q-item>
-    <q-item clickable @click="logout">
+    <q-item clickable @click="logout" class="text-secondary">
       <q-item-section avatar>
         <q-icon name="logout"/>
       </q-item-section>
@@ -51,3 +51,8 @@ export default defineComponent({
   }
 })
 </script>
+<style>
+.q-router-link--active {
+  font-weight: bold;
+}
+</style>

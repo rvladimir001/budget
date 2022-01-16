@@ -3,7 +3,7 @@
     <q-dialog v-model="status" persistent>
       <q-card style="min-width: 350px">
         <q-card-section>
-          <div class="text-h6">Удалить категорию "{{ category.name }}"?</div>
+          <div class="text-h6 text-secondary">Удалить категорию <span style="font-weight: bold">"{{ category.name }}"</span>?</div>
         </q-card-section>
         <q-card-actions align="right" class="text-secondary">
           <q-btn flat label="Отмена" @click="setDialog(null)" v-close-popup/>
