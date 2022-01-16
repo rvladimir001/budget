@@ -5,6 +5,9 @@ import {firebaseDB, firebaseAuth} from 'boot/firebase.js'
 import {ref, set, onValue, update, push} from "firebase/database";
 import {createUserWithEmailAndPassword, signInWithEmailAndPassword, onAuthStateChanged, signOut} from "firebase/auth";
 
+import {addDoc, collection} from "firebase/firestore";
+
+
 export default store(function (/* { ssrContext } */) {
   const Store = createStore({
     state: {
@@ -103,14 +106,15 @@ export default store(function (/* { ssrContext } */) {
       },
     },
     actions: {
-      registrationUser(cntx, user) {
+      async registrationUser(cntx, user) {
         cntx.commit('setEmailAlreadyInUse', false)
         cntx.commit('setInvalidRegEmail', false)
         const today = new Date();
         createUserWithEmailAndPassword(firebaseAuth, user.email.value, user.pas.value)
           .then(response => {
             let userID = response.user.uid
-            set(ref(firebaseDB, `users/${userID}`), {
+            try {
+              const docRef = addDoc(collection(firebaseDB, "users"), {
               name: user.name.value,
               email: user.email.value,
               calculation: 1,
@@ -149,6 +153,52 @@ export default store(function (/* { ssrContext } */) {
                 ]
               }
             });
+
+              console.log("Document written with ID: ", docRef.id);
+            } catch (e) {
+              console.error("Error adding document: ", e);
+            }
+            //старая запись в realtime bd
+            // set(ref(firebaseDB, `users/${userID}`), {
+            //   name: user.name.value,
+            //   email: user.email.value,
+            //   calculation: 1,
+            //   creation: String(today),
+            //   archive: false,
+            //   outlays: {
+            //     update: String(today),
+            //     creation: String(today),
+            //     balance: 0,
+            //     countBalance: 0,
+            //     list: [
+            //       {
+            //         name: "Продукты",
+            //         outlay: 0,
+            //         color: '#ff0000',
+            //         deleted: false
+            //       },
+            //       {
+            //         name: "Транспорт",
+            //         outlay: 0,
+            //         color: '#ff8000',
+            //         deleted: false
+            //       },
+            //       {
+            //         name: "Развлечения",
+            //         outlay: 0,
+            //         color: '#ffff00',
+            //         deleted: false
+            //       },
+            //       {
+            //         name: "Услуги",
+            //         outlay: 0,
+            //         color: '#00ff00',
+            //         deleted: false
+            //       }
+            //     ]
+            //   }
+            // });
+            //старая запись в бд
           })
           .catch(error => {
             if (error.code === 'auth/email-already-in-use') {
@@ -180,7 +230,7 @@ export default store(function (/* { ssrContext } */) {
       },
       handlerAuthStateChange(cntx) {
         onAuthStateChanged(firebaseAuth, (user) => {
-          if (user) {
+          if (false) {
             let userID = user.uid;
             cntx.commit('setUserID', userID)
             const countRef = ref(firebaseDB, `users/${userID}`);
