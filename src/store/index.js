@@ -2,7 +2,7 @@ import {store} from 'quasar/wrappers'
 import {createStore} from 'vuex'
 
 import {firebaseDB, firebaseAuth} from 'boot/firebase.js'
-import {ref, set, onValue, update, push} from "firebase/database";
+import {ref, set, onValue, update, push, remove} from "firebase/database";
 import {createUserWithEmailAndPassword, signInWithEmailAndPassword, onAuthStateChanged, signOut} from "firebase/auth";
 
 export default store(function (/* { ssrContext } */) {
@@ -28,7 +28,7 @@ export default store(function (/* { ssrContext } */) {
         '#9ACD32', '#9932CC', '#FF1493', '#778899',
         '#b2b2b2', '#7f7f7f', '#4c4c4c', '#191919'
       ],
-      actualPallets: []
+      actualPallets: [],
     },
     getters: {
       statusDialogWaste: (state) => state.statusDialogWaste,
@@ -45,10 +45,6 @@ export default store(function (/* { ssrContext } */) {
       currentOutlay: (state) => state.currentOutlay,
       pallets: (state) => state.pallets,
       actualPallets: (state) => {
-        console.log('actualPallets', typeof state.outlays.list)
-        // for(let outlay in state.outlays.list) {
-        //   console.log("outlay", outlay)
-        // }
         const usedColors = Object.keys(state.outlays.list).map(function (outlay) {
           return state.outlays.list[outlay].color;
         });
@@ -60,56 +56,56 @@ export default store(function (/* { ssrContext } */) {
     },
     mutations: {
       setStatusDialogWaste: (state, status) => {
-        state.statusDialogWaste = status
+        state.statusDialogWaste = status;
       },
       setStatusDialogAddCategory: (state, status) => {
-        state.statusDialogCategory = status
+        state.statusDialogCategory = status;
       },
       setStatusDialogBalance: (state, status) => {
-        state.statusDialogBalance = status
+        state.statusDialogBalance = status;
       },
       setDelCategory: (state, status) => {
-        state.delCategory = status
+        state.delCategory = status;
       },
       setInvalidEmail: (state, status) => {
-        state.invalidEmail = status
+        state.invalidEmail = status;
       },
       setWrongPassword: (state, status) => {
-        state.wrongPassword = status
+        state.wrongPassword = status;
       },
       setEmailAlreadyInUse: (state, status) => {
-        state.emailAlreadyInUse = status
+        state.emailAlreadyInUse = status;
       },
       setInvalidRegEmail: (state, status) => {
-        state.invalidRegEmail = status
+        state.invalidRegEmail = status;
       },
       setUserID: (state, userID) => {
-        state.userID = userID
+        state.userID = userID;
       },
       setUserDetails: (state, user) => {
-        state.userDetails = user
+        state.userDetails = user;
       },
       setOutlays: (state, outlays) => {
-        state.outlays = outlays
+        state.outlays = outlays;
       },
       setCurrentOutlay: (state, currentOutlay) => {
-        state.currentOutlay = currentOutlay
+        state.currentOutlay = currentOutlay;
       },
       setPallets: (state, pallets) => {
-        state.pallets = pallets
+        state.pallets = pallets;
       },
       setActualPallets: (state, actualPallets) => {
-        state.actualPallets = actualPallets
+        state.actualPallets = actualPallets;
       },
     },
     actions: {
       registrationUser(cntx, user) {
-        cntx.commit('setEmailAlreadyInUse', false)
-        cntx.commit('setInvalidRegEmail', false)
+        cntx.commit('setEmailAlreadyInUse', false);
+        cntx.commit('setInvalidRegEmail', false);
         const today = new Date();
         createUserWithEmailAndPassword(firebaseAuth, user.email.value, user.pas.value)
           .then(response => {
-            let userID = response.user.uid
+            let userID = response.user.uid;
             set(ref(firebaseDB, `users/${userID}`), {
               name: user.name.value,
               email: user.email.value,
@@ -152,44 +148,44 @@ export default store(function (/* { ssrContext } */) {
           })
           .catch(error => {
             if (error.code === 'auth/email-already-in-use') {
-              cntx.commit('setEmailAlreadyInUse', true)
+              cntx.commit('setEmailAlreadyInUse', true);
             }
             if (error.code === 'auth/invalid-email') {
-              cntx.commit('setInvalidRegEmail', true)
+              cntx.commit('setInvalidRegEmail', true);
             }
           })
       },
       loginUser(cntx, user) {
-        cntx.commit('setInvalidEmail', false)
-        cntx.commit('setWrongPassword', false)
+        cntx.commit('setInvalidEmail', false);
+        cntx.commit('setWrongPassword', false);
         signInWithEmailAndPassword(firebaseAuth, user.email.value, user.pas.value)
           .catch(error => {
             if (error.code === 'auth/invalid-email') {
-              cntx.commit('setInvalidEmail', true)
+              cntx.commit('setInvalidEmail', true);
             }
             if (error.code === 'auth/wrong-password') {
-              cntx.commit('setWrongPassword', true)
+              cntx.commit('setWrongPassword', true);
             }
-          })
+          });
       },
       logoutUser() {
         signOut(firebaseAuth).then(() => {
         }).catch((error) => {
-          console.log(error)
+          console.log(error);
         });
       },
       handlerAuthStateChange(cntx) {
         onAuthStateChanged(firebaseAuth, (user) => {
           if (user) {
             let userID = user.uid;
-            cntx.commit('setUserID', userID)
+            cntx.commit('setUserID', userID);
             const countRef = ref(firebaseDB, `users/${userID}`);
             onValue(countRef, (snapshot) => {
               const userData = snapshot.val();
-              const actualYear = new Date().getFullYear()
-              const actualMonth = new Date().getMonth()
-              const creationYear = new Date(userData.outlays.creation).getFullYear()
-              const creationMonth = new Date(userData.outlays.creation).getMonth()
+              const actualYear = new Date().getFullYear();
+              const actualMonth = new Date().getMonth();
+              const creationYear = new Date(userData.outlays.creation).getFullYear();
+              const creationMonth = new Date(userData.outlays.creation).getMonth();
               if (actualYear > creationYear || (actualYear === creationYear && actualMonth > creationMonth)) {
                 const outlayArchiveRef = ref(firebaseDB, `users/${userID}/archive/${userData.outlays.creation}`);
                 update(outlayArchiveRef, Object.assign({}, userData.outlays))
@@ -200,9 +196,13 @@ export default store(function (/* { ssrContext } */) {
                 })
                 for (let key in userData.outlays.list) {
                   const outlayListRef = ref(firebaseDB, `users/${userID}/outlays/list/${key}`);
-                  update(outlayListRef, {
-                    outlay: 0
-                  })
+                  if (userData.outlays.list[key].deleted) {
+                    remove(outlayListRef);
+                  } else {
+                    update(outlayListRef, {
+                      outlay: 0
+                    });
+                  }
                 }
               }
               cntx.commit('setUserDetails', {
@@ -212,15 +212,15 @@ export default store(function (/* { ssrContext } */) {
               })
               cntx.commit('setOutlays', userData.outlays)
             });
-            this.$router.push('/')
+            this.$router.push('/');
           } else {
-            cntx.commit('setUserDetails', {})
-            this.$router.replace('/login')
+            cntx.commit('setUserDetails', {});
+            this.$router.replace('/login');
           }
         });
       },
       addCategory(cntx, category) {
-        const userID = this.getters.userID
+        const userID = this.getters.userID;
         const outlayListRef = ref(firebaseDB, `users/${userID}/outlays/list`);
         const newOutlayRef = push(outlayListRef);
         set(newOutlayRef, {
@@ -229,11 +229,11 @@ export default store(function (/* { ssrContext } */) {
           deleted: false,
           outlay: 0
         }).then(() => {
-          cntx.commit('setStatusDialogAddCategory', false)
+          cntx.commit('setStatusDialogAddCategory', false);
         })
       },
       delCategory(cntx, key) {
-        const userID = this.getters.userID
+        const userID = this.getters.userID;
         const todayUpdate = new Date();
         const outlayListRef = ref(firebaseDB, `users/${userID}/outlays/list/${key}`);
         update(outlayListRef, {
@@ -244,13 +244,12 @@ export default store(function (/* { ssrContext } */) {
             update: String(todayUpdate)
           })
         }).then(() => {
-          cntx.commit('setStatusDialogWaste', false)
+          cntx.commit('setStatusDialogWaste', false);
         })
       },
       addOutlay(cntx, newOutlay) {
-        const oldValue = Number(newOutlay.currentOutlay.value.outlay.outlay)
-        const oldBalance = this.getters.outlays.balance
-        const userID = this.getters.userID
+        const oldValue = Number(newOutlay.currentOutlay.value.outlay.outlay);
+        const userID = this.getters.userID;
         const todayUpdate = new Date();
         const outlayListRef = ref(firebaseDB, `users/${userID}/outlays/list/${newOutlay.currentOutlay.value.key}`);
         update(outlayListRef, {
@@ -267,12 +266,12 @@ export default store(function (/* { ssrContext } */) {
             update: String(todayUpdate)
           })
         }).then(() => {
-          cntx.commit('setStatusDialogWaste', false)
+          cntx.commit('setStatusDialogWaste', false);
         })
       },
       addBalance(cntx, newMany) {
-        const userID = this.getters.userID
-        const oldBalance = this.getters.outlays.balance
+        const userID = this.getters.userID;
+        const oldBalance = this.getters.outlays.balance;
         const outlayDateRef = ref(firebaseDB, `users/${userID}/outlays/`);
         update(outlayDateRef, {
           balance: Number(oldBalance) + Number(newMany),
