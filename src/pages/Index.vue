@@ -6,23 +6,23 @@
       @drop="onDrop"
     >
       <div class="many-block">
-      <img
-        src="~assets/purse.png" alt="" style="height: 80px">
-      <img
-        @click="addBalance()"
-        draggable="true"
-        @dragstart="onDragStart"
-        class="banknotes"
-        :style="{opacity: showMany}"
-        src="~assets/banknotes.png" alt="" style="height: 80px">
-        </div>
+        <img
+          src="~assets/purse.png" alt="" style="height: 80px">
+        <img
+          @click="addBalance()"
+          draggable="true"
+          @dragstart="onDragStart"
+          class="banknotes"
+          :style="{opacity: showMany}"
+          src="~assets/banknotes.png" alt="" style="height: 80px">
+      </div>
       <div class="text-secondary" style="font-size: 24px">{{ outlays.balance }}</div>
     </div>
     <div class="q-pa-md row items-start q-gutter-md justify-center">
       <template
         v-for="(outlay, key) in outlays.list"
         v-bind:key="outlay"
-      style="display: flex;"
+        style="display: flex;"
       >
         <q-card
           v-if="!outlay.deleted"
@@ -33,9 +33,9 @@
             @drop="onDrop(outlay.name)"
             :id="outlay.name"
           >
+            <div class="box-color" :style="{background: outlay.color}"></div>
             <div class="text-h6">{{ outlay.name }}</div>
             <div class="text-subtitle2">{{ outlay.outlay }}</div>
-            <div class="box-color" :style="{background: outlay.color}"></div>
           </q-card-section>
         </q-card>
       </template>
@@ -113,8 +113,8 @@ export default defineComponent({
       },
 
       onDrop(category) {
-        Object.keys(outlays.value.list).forEach((key, element)=> {
-          if(category === outlays.value.list[key].name){
+        Object.keys(outlays.value.list).forEach((key, element) => {
+          if (category === outlays.value.list[key].name) {
             setDialog(outlays.value.list[key], key);
           }
         })
@@ -168,16 +168,16 @@ export default defineComponent({
 }
 
 .box-color {
-  width: 15px;
-  height: 15px;
+  width: 10px;
+  height: 10px;
+  margin-left: -5px;
+  margin-top: -5px;
 }
-
-
 
 .many-block {
   position: relative;
-
 }
+
 .banknotes {
   cursor: pointer;
   position: absolute;
