@@ -1,12 +1,12 @@
 <template>
   <q-list v-ripple>
-    <q-item clickable v-ripple to="/">
+    <q-item clickable to="/home" class="text-secondary">
       <q-item-section avatar>
         <q-avatar>
           <img src="https://cdn.quasar.dev/img/boy-avatar.png">
         </q-avatar>
       </q-item-section>
-      <q-item-section class="text-secondary">{{ name }}</q-item-section>
+      <q-item-section>{{ name }}</q-item-section>
     </q-item>
     <q-item clickable to="/statistics" class="text-secondary">
       <q-item-section avatar>

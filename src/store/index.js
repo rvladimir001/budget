@@ -212,7 +212,7 @@ export default store(function (/* { ssrContext } */) {
               })
               cntx.commit('setOutlays', userData.outlays)
             });
-            this.$router.push('/');
+            this.$router.push('/home');
           } else {
             cntx.commit('setUserDetails', {});
             this.$router.replace('/login');
