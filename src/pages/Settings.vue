@@ -9,7 +9,7 @@
           v-if="!outlay.deleted"
         >
           <q-item-section>
-            <q-item-label lines="1">{{ outlay.name }}</q-item-label>
+            <q-item-label lines="1" class="text-secondary">{{ outlay.name }}</q-item-label>
           </q-item-section>
           <q-item-section side>
             <q-icon @click="openDelDialog({key: key, name: outlay.name})" class="edit" name="edit" color="secondary"/>
