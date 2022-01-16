@@ -34,8 +34,8 @@
             :id="outlay.name"
           >
             <div class="box-color" :style="{background: outlay.color}"></div>
-            <div class="text-h6">{{ outlay.name }}</div>
-            <div class="text-subtitle2">{{ outlay.outlay }}</div>
+            <div class="text-name text-secondary">{{ shortName(outlay.name) }}</div>
+            <div class="text-subtitle1 text-secondary">{{ outlay.outlay }}</div>
           </q-card-section>
         </q-card>
       </template>
@@ -80,6 +80,12 @@ export default defineComponent({
     const addBalance = () => {
       store.commit("setStatusDialogBalance", true);
     }
+    const shortName = (name) => {
+      if(name.length > 13) {
+        return `${name.slice(0, 11)}..`;
+      }
+      return name
+    }
     const outlays = computed(() => store.state.outlays);
     onMounted(() => {
       // store.dispatch("getOutlays")
@@ -89,6 +95,7 @@ export default defineComponent({
       setDialog,
       openAddCategoryDialog,
       addBalance,
+      shortName,
       showMany,
       // store the id of the draggable element
       onDragStart(e) {
@@ -127,7 +134,7 @@ export default defineComponent({
 .my-card {
   width: 100%;
   max-width: 150px;
-  height: 100px;
+  height: 90px;
   cursor: pointer;
 }
 
@@ -184,5 +191,7 @@ export default defineComponent({
   margin-left: -90px;
   opacity: 0;
 }
-
+.text-name {
+  font-size: 1.1rem;
+}
 </style>
