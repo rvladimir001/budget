@@ -13,30 +13,24 @@
           </q-item-section>
           <q-item-section side>
             <q-icon @click="openDelDialog({key: key, name: outlay.name})" class="edit" name="edit" color="secondary"/>
-            </q-item-section>
+          </q-item-section>
           <q-item-section side>
             <q-icon @click="openDelDialog({key: key, name: outlay.name})" class="delete" name="delete" color="red"/>
           </q-item-section>
         </q-item>
       </template>
-      <q-item>
-        <q-item-section>
-          <q-item-label lines="1">
-            <q-btn class="glossy" color="teal" icon="add" @click="openAddCategoryDialog()"/>
-          </q-item-label>
-        </q-item-section>
-      </q-item>
     </q-list>
-<!--    <div class="q-pa-md q-gutter-md q-mx-auto" style="max-width: 350px">-->
-<!--      <q-toggle-->
-<!--        v-model="autoСompletion"-->
-<!--        checked-icon="check"-->
-<!--        color="secondary"-->
-<!--        label="Автопополнение"-->
-<!--        unchecked-icon="clear"-->
-<!--      />-->
-<!--      <q-input type="number" autofocus dense :disable="!autoСompletion"/>-->
-<!--    </div>-->
+    <q-btn class="glossy plus" round color="teal" icon="add" @click="openAddCategoryDialog()"/>
+    <!--    <div class="q-pa-md q-gutter-md q-mx-auto" style="max-width: 350px">-->
+    <!--      <q-toggle-->
+    <!--        v-model="autoСompletion"-->
+    <!--        checked-icon="check"-->
+    <!--        color="secondary"-->
+    <!--        label="Автопополнение"-->
+    <!--        unchecked-icon="clear"-->
+    <!--      />-->
+    <!--      <q-input type="number" autofocus dense :disable="!autoСompletion"/>-->
+    <!--    </div>-->
 
   </div>
   <DelCategory/>
@@ -76,6 +70,8 @@ export default {
 }
 
 .plus {
-  font-size: 36px;
+  margin-left: auto;
+  margin-right: 5rem;
+  font-size: 1rem;
 }
 </style>
