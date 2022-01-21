@@ -29,6 +29,7 @@ export default store(function (/* { ssrContext } */) {
         '#b2b2b2', '#7f7f7f', '#4c4c4c', '#191919'
       ],
       actualPallets: [],
+      editCategory: {}
     },
     getters: {
       statusDialogWaste: (state) => state.statusDialogWaste,
@@ -44,15 +45,8 @@ export default store(function (/* { ssrContext } */) {
       outlays: (state) => state.outlays,
       currentOutlay: (state) => state.currentOutlay,
       pallets: (state) => state.pallets,
-      actualPallets: (state) => {
-        const usedColors = Object.keys(state.outlays.list).map(function (outlay) {
-          return state.outlays.list[outlay].color;
-        });
-        return state.pallets.filter(function (color) {
-          return !usedColors.includes(color);
-        });
-        return state.pallets
-      },
+      actualPallets: (state) => state.actualPallets,
+      editCategory: (state) => state.editCategory,
     },
     mutations: {
       setStatusDialogWaste: (state, status) => {
@@ -96,6 +90,9 @@ export default store(function (/* { ssrContext } */) {
       },
       setActualPallets: (state, actualPallets) => {
         state.actualPallets = actualPallets;
+      },
+      setEditCategory: (state, editCategory) => {
+        state.editCategory = editCategory;
       },
     },
     actions: {
@@ -211,6 +208,13 @@ export default store(function (/* { ssrContext } */) {
                 id: userID
               })
               cntx.commit('setOutlays', userData.outlays)
+              const usedColors = Object.keys(userData.outlays.list).map(function (outlay) {
+                return userData.outlays.list[outlay].color;
+              });
+              const actualColors = this.state.pallets.filter(function (color) {
+                return !usedColors.includes(color);
+              });
+              cntx.commit('setActualPallets', actualColors)
             });
             this.$router.push('/home');
           } else {
@@ -230,6 +234,13 @@ export default store(function (/* { ssrContext } */) {
           outlay: 0
         }).then(() => {
           cntx.commit('setStatusDialogAddCategory', false);
+        })
+      },
+      editCategory(cntx, updateCategory) {
+        const userID = this.getters.userID;
+        const outlayDateRef = ref(firebaseDB, `users/${userID}/outlays//list/${updateCategory.currentCategory}`);
+        update(outlayDateRef, {
+          name: updateCategoryNewName,
         })
       },
       delCategory(cntx, key) {
