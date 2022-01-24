@@ -29,7 +29,8 @@ export default store(function (/* { ssrContext } */) {
         '#b2b2b2', '#7f7f7f', '#4c4c4c', '#191919'
       ],
       actualPallets: [],
-      editCategory: {}
+      editCategory: {},
+      archiveData: null
     },
     getters: {
       statusDialogWaste: (state) => state.statusDialogWaste,
@@ -47,6 +48,7 @@ export default store(function (/* { ssrContext } */) {
       pallets: (state) => state.pallets,
       actualPallets: (state) => state.actualPallets,
       editCategory: (state) => state.editCategory,
+      archiveData: (state) => state.archiveData,
     },
     mutations: {
       setStatusDialogWaste: (state, status) => {
@@ -92,7 +94,11 @@ export default store(function (/* { ssrContext } */) {
         state.actualPallets = actualPallets;
       },
       setEditCategory: (state, editCategory) => {
+        console.log("editCategory", editCategory)
         state.editCategory = editCategory;
+      },
+      setArchiveData: (state, data) => {
+        state.archiveData = data;
       },
     },
     actions: {
@@ -237,11 +243,12 @@ export default store(function (/* { ssrContext } */) {
         })
       },
       editCategory(cntx, updateCategory) {
-        const userID = this.getters.userID;
-        const outlayDateRef = ref(firebaseDB, `users/${userID}/outlays//list/${updateCategory.currentCategory}`);
-        update(outlayDateRef, {
-          name: updateCategoryNewName,
-        })
+        console.log("updateCategory", updateCategory)
+        // const userID = this.getters.userID;
+        // const outlayDateRef = ref(firebaseDB, `users/${userID}/outlays//list/${updateCategory.currentCategory}`);
+        // update(outlayDateRef, {
+        //   name: updateCategory.updateCategoryNewName,
+        // })
       },
       delCategory(cntx, key) {
         const userID = this.getters.userID;
@@ -288,6 +295,64 @@ export default store(function (/* { ssrContext } */) {
           balance: Number(oldBalance) + Number(newMany),
           countBalance: Number(oldBalance) + Number(newMany)
         })
+      },
+      getArchive(cntx) {
+        const userID = this.getters.userID;
+        const countRef = ref(firebaseDB, `users/${userID}`);
+        const months = {
+          0: "Январь",
+          1: "Февраль",
+          2: "Март",
+          3: "Апрель",
+          4: "Мая",
+          5: "Июнь",
+          6: "Июль",
+          7: "Август",
+          8: "Сентябрь",
+          9: "Октябрь",
+          10: "Нояборь",
+          11: "Декабрь"
+        }
+        let yearsData = {}
+        onValue(countRef, (snapshot) => {
+          const userData = snapshot.val();
+          const archive = Object.values(userData.archive)
+          for(let elem in archive) {
+            const currentDate = new Date(archive[elem].update);
+            let year = String(currentDate.getFullYear());
+            let month = months[currentDate.getMonth()];
+            const outlaysList = Object.values(archive[elem].list);
+            let outlayResult = 0;
+            for(let category in outlaysList) {
+              outlayResult+=outlaysList[category].outlay
+            }
+            if(Object.keys(yearsData).includes(year)) {
+              yearsData[year]['label'].push(month)
+              yearsData[year]['data'].push(outlayResult)
+            } else {
+              yearsData[year] = {};
+              yearsData[year]['label'] = [month];
+              yearsData[year]['data'] = [outlayResult];
+            }
+          }
+          const actualOutlays = this.getters.outlays;
+          const actualDate = new Date(actualOutlays.update)
+          const actualYear = String(actualDate.getFullYear())
+          const actualMonth = months[actualDate.getMonth()];
+          let actualOutlayResult = 0;
+            for(let category in actualOutlays.list) {
+              actualOutlayResult+=actualOutlays.list[category].outlay
+            }
+          if(Object.keys(yearsData).includes(actualYear)) {
+              yearsData[actualYear]['label'].push(actualMonth)
+              yearsData[actualYear]['data'].push(actualOutlayResult)
+            } else {
+              yearsData[actualYear] = {};
+              yearsData[actualYear]['label'] = [actualMonth];
+              yearsData[actualYear]['data'] = [actualOutlayResult];
+            }
+        })
+        cntx.commit('setArchiveData', yearsData);
       }
     },
     modules: {
