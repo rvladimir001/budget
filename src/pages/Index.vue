@@ -16,7 +16,6 @@
           :style="{opacity: showMany}"
           src="~assets/banknotes.png" alt="" style="height: 80px">
       </div>
-      <div class="text-secondary" style="font-size: 24px">{{ outlays.balance }}</div>
     </div>
     <div class="q-pa-md row items-start q-gutter-md justify-center">
       <template
@@ -87,9 +86,7 @@ export default defineComponent({
       return name
     }
     const outlays = computed(() => store.state.outlays);
-    onMounted(() => {
-      // store.dispatch("getOutlays")
-    })
+
     return {
       outlays,
       setDialog,

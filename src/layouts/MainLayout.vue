@@ -13,7 +13,7 @@
         />
 
         <q-toolbar-title>
-          Мои расходы
+          Балансе: {{balance}} ₽
         </q-toolbar-title>
         <q-btn
           v-if="name"
@@ -58,6 +58,7 @@ export default defineComponent({
   setup() {
     const store = useStore();
     let leftDrawerOpen = ref(false);
+    const balance = computed(() => store.state.outlays.balance);
     const name = computed(() => store.state.userDetails.name);
     const toggleLeftDrawer = () => {
       leftDrawerOpen.value = !leftDrawerOpen.value;
@@ -69,6 +70,7 @@ export default defineComponent({
     return {
       leftDrawerOpen,
       name,
+      balance,
       toggleLeftDrawer,
       logout
     }
