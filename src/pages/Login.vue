@@ -124,10 +124,7 @@ export default {
         val => (val && val.length > 0) || 'Заполните поле.'
       ],
       isValidPas: computed(() => {
-        if (regPas.value.length >= 6 || regPas.value === "") {
-          return false;
-        }
-        return true
+        return !(regPas.value.length >= 6 || regPas.value === "");
       }),
       loginEmail,
       loginPas,

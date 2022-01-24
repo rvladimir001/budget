@@ -13,7 +13,7 @@
         />
 
         <q-toolbar-title>
-          Балансе: {{balance}} ₽
+          Баланс: {{balance}} ₽
         </q-toolbar-title>
         <q-btn
           v-if="name"
