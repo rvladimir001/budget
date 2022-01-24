@@ -61,8 +61,8 @@
                 <q-input v-model="RegEmail"
                          label="Почта"
                          :dense="dense"
-                         error-message="Некорректно указана почта."
-                         :error="invalidRegEmail"
+                         error-message="Почта уже используется или указана неверно почта."
+                         :error="invalidRegEmail || emailAlreadyInUse"
                          lazy-rules
                          :rules="valRules"
                 />
@@ -118,6 +118,7 @@ export default {
     const invalidEmail = computed(() => store.state.invalidEmail);
     const wrongPassword = computed(() => store.state.wrongPassword);
     const invalidRegEmail = computed(() => store.state.invalidRegEmail);
+    const emailAlreadyInUse = computed(() => store.state.emailAlreadyInUse);
     return {
       valRules: [
         val => (val && val.length > 0) || 'Заполните поле.'
@@ -142,7 +143,8 @@ export default {
       disabledReg,
       invalidEmail,
       wrongPassword,
-      invalidRegEmail
+      invalidRegEmail,
+      emailAlreadyInUse
     }
   }
 }
