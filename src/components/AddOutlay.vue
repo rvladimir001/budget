@@ -17,7 +17,7 @@
           />
         </q-card-section>
         <q-card-actions align="right" class="text-secondary">
-          <q-btn flat label="Отмена" @click="setDialog(false)" v-close-popup/>
+          <q-btn flat label="Отмена" @click="close" v-close-popup/>
           <q-btn flat label="Внести" @click="add" v-close-popup :disable="statusButtonSave"/>
         </q-card-actions>
       </q-card>
@@ -38,11 +38,13 @@ export default {
     const balance = computed(() => store.state.outlays.balance);
     const statusButtonSave = computed(() => waste.value > balance.value || waste.value<=0);
     let waste = ref('');
-    const setDialog = (status) => {
+    const close = (status) => {
+      waste.value = "";
       store.commit("setStatusDialogWaste", status);
     };
     const add = () => {
-      store.dispatch("addOutlay", {currentOutlay: currentOutlay, value: waste})
+      store.dispatch("addOutlay", {currentOutlay: currentOutlay, value: waste});
+      close();
     }
     return {
       balance,
@@ -58,7 +60,7 @@ export default {
       add,
       prompt: ref(false),
       status,
-      setDialog
+      close
     }
   }
 }

@@ -15,7 +15,7 @@
             @keyup.enter="prompt = false"/>
         </q-card-section>
         <q-card-actions align="right" class="text-secondary">
-          <q-btn flat label="Отмена" @click="setDialog(false)" v-close-popup/>
+          <q-btn flat label="Отмена" @click="close" v-close-popup/>
           <q-btn flat label="Внести" @click="add" :disable="statusButtonSave" v-close-popup/>
         </q-card-actions>
       </q-card>
@@ -35,12 +35,13 @@ export default {
     const currentOutlay = computed(() => store.state.currentOutlay);
     const statusButtonSave = computed(() => refill.value<=0);
     let refill = ref('')
-    const setDialog = (status) => {
-      store.commit("setStatusDialogBalance", status);
+    const close = () => {
+      refill.value = ''
+      store.commit("setStatusDialogBalance", false);
     };
     const add = () => {
       store.dispatch("addBalance", refill.value)
-      setDialog(false)
+      close()
     }
     return {
       statusButtonSave,
@@ -54,7 +55,7 @@ export default {
       add,
       prompt: ref(false),
       status,
-      setDialog
+      close
     }
   }
 }
