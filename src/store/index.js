@@ -243,7 +243,7 @@ export default store(function (/* { ssrContext } */) {
       },
       editCategory(cntx, updateCategory) {
         const userID = this.getters.userID;
-        const outlayDateRef = ref(firebaseDB, `users/${userID}/outlays//list/${updateCategory.currentCategory}`);
+        const outlayDateRef = ref(firebaseDB, `users/${userID}/outlays//list/${updateCategory.key}`);
         update(outlayDateRef, {
           name: updateCategory.category,
           color: updateCategory.color

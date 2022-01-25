@@ -51,7 +51,9 @@ export default {
     const editCategory = computed(() => store.getters.editCategory);
     const categoryList = computed(() => {
       return Object.keys(store.getters.outlays.list).map(function (outlay) {
-        return store.getters.outlays.list[outlay].name.toUpperCase();
+        if(!store.getters.outlays.list[outlay].deleted){
+          return store.getters.outlays.list[outlay].name.toUpperCase();
+        }
       });
     });
     const defaultColor = computed(() => {
@@ -83,7 +85,7 @@ export default {
       }
       close();
     }
-    const statusButtonSave = computed(() => category.value <= 0 || categoryList.value.includes(category.value.trim().toUpperCase()));
+    const statusButtonSave = computed(() => category.value <= 0 || (!editCategory.value && categoryList.value.includes(category.value.trim().toUpperCase())));
     return {
       prompt: ref(false),
       color,
@@ -93,7 +95,7 @@ export default {
       rules: [
         val => !!val || 'Заполните поле!',
         val => {
-          if (categoryList.value.includes(val.trim().toUpperCase())) {
+          if (!editCategory.value && categoryList.value.includes(val.trim().toUpperCase())) {
             return "Такая категория уже существует"
           }
         },
