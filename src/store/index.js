@@ -268,14 +268,15 @@ export default store(function (/* { ssrContext } */) {
         const oldValue = Number(newOutlay.currentOutlay.value.outlay.outlay);
         const userID = this.getters.userID;
         const todayUpdate = new Date();
+        const newOutlayValue = Number(newOutlay.value.value)
         const outlayListRef = ref(firebaseDB, `users/${userID}/outlays/list/${newOutlay.currentOutlay.value.key}`);
         update(outlayListRef, {
-          outlay: oldValue + Number(newOutlay.value.value)
+          outlay: oldValue + newOutlayValue
         }).then(() => {
           const oldBalance = this.getters.outlays.balance
           const outlayDateRef = ref(firebaseDB, `users/${userID}/outlays/`);
           update(outlayDateRef, {
-            balance: Number(oldBalance) - Number(newOutlay.value.value),
+            balance: Number(oldBalance) - newOutlayValue,
           })
         }).then(() => {
           const outlayDateRef = ref(firebaseDB, `users/${userID}/outlays/`);
