@@ -12,7 +12,7 @@
             <q-item-label lines="1" class="text-secondary">{{ outlay.name }}</q-item-label>
           </q-item-section>
           <q-item-section side>
-            <q-icon @click="openDelDialog({key: key, name: outlay.name})" class="edit" name="edit" color="secondary"/>
+            <q-icon @click="openEditDialog({key: key, name: outlay.name, color: outlay.color})" class="edit" name="edit" color="secondary"/>
           </q-item-section>
           <q-item-section side>
             <q-icon @click="openDelDialog({key: key, name: outlay.name})" class="delete" name="delete" color="red"/>
@@ -21,23 +21,12 @@
       </template>
     </q-list>
     <q-btn class="glossy plus" round color="teal" icon="add" @click="openAddCategoryDialog()"/>
-    <!--    <div class="q-pa-md q-gutter-md q-mx-auto" style="max-width: 350px">-->
-    <!--      <q-toggle-->
-    <!--        v-model="autoСompletion"-->
-    <!--        checked-icon="check"-->
-    <!--        color="secondary"-->
-    <!--        label="Автопополнение"-->
-    <!--        unchecked-icon="clear"-->
-    <!--      />-->
-    <!--      <q-input type="number" autofocus dense :disable="!autoСompletion"/>-->
-    <!--    </div>-->
-
   </div>
   <DelCategory/>
 </template>
 
 <script>
-import {computed, ref} from "vue";
+import {computed} from "vue";
 import {useStore} from "vuex";
 import DelCategory from 'components/DelCategory.vue'
 
@@ -46,7 +35,6 @@ export default {
   components: {DelCategory},
   setup() {
     const store = useStore();
-    const autoСompletion = ref(false)
     const outlays = computed(() => store.state.outlays);
     const openAddCategoryDialog = () => {
       store.commit("setStatusDialogAddCategory", true);
@@ -54,11 +42,15 @@ export default {
     const openDelDialog = (category) => {
       store.commit("setDelCategory", category);
     }
+    const openEditDialog = (category) => {
+      store.commit("setEditCategory", category);
+      store.commit("setStatusDialogAddCategory", true);
+    }
     return {
       outlays,
       openAddCategoryDialog,
       openDelDialog,
-      autoСompletion
+      openEditDialog,
     }
   }
 }
