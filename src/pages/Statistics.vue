@@ -57,7 +57,9 @@ export default {
       store.dispatch("getArchive")
     });
     onMounted(() => {
-      updateChart()
+      if(sumOutlays.value){
+        updateChart()
+      }
     });
     const defaultYear = computed(() => {
       if (currentYear.value) {
@@ -68,9 +70,13 @@ export default {
     const outlays = computed(() => store.state.outlays.list);
     const balance = computed(() => store.state.outlays.balance);
     const sumOutlays = computed(() => {
-      return Object.keys(outlays.value).reduce(function (accumulator, currentValue) {
+      const sum = Object.keys(outlays.value).reduce(function (accumulator, currentValue) {
         return accumulator + outlays.value[currentValue].outlay;
       }, 0)
+      if (sum) {
+        return sum
+      }
+      return 0
     })
     const actualData = computed(() => {
       const data = {labels: [], data: [], color: []}
