@@ -12,9 +12,14 @@
           @click="toggleLeftDrawer"
         />
 
-        <q-toolbar-title>
+        <q-toolbar-title v-if="name">
           Баланс: {{balance}} ₽
         </q-toolbar-title>
+
+        <q-toolbar-title v-else>
+          Контроль расходов
+        </q-toolbar-title>
+
         <q-btn
           v-if="name"
           flat
