@@ -29,7 +29,7 @@ export default store(function (/* { ssrContext } */) {
         '#b2b2b2', '#7f7f7f', '#4c4c4c', '#191919'
       ],
       actualPallets: [],
-      editCategory: {},
+      editCategory: null,
       archiveData: null
     },
     getters: {
@@ -94,7 +94,6 @@ export default store(function (/* { ssrContext } */) {
         state.actualPallets = actualPallets;
       },
       setEditCategory: (state, editCategory) => {
-        console.log("editCategory", editCategory)
         state.editCategory = editCategory;
       },
       setArchiveData: (state, data) => {
@@ -243,12 +242,12 @@ export default store(function (/* { ssrContext } */) {
         })
       },
       editCategory(cntx, updateCategory) {
-        console.log("updateCategory", updateCategory)
-        // const userID = this.getters.userID;
-        // const outlayDateRef = ref(firebaseDB, `users/${userID}/outlays//list/${updateCategory.currentCategory}`);
-        // update(outlayDateRef, {
-        //   name: updateCategory.updateCategoryNewName,
-        // })
+        const userID = this.getters.userID;
+        const outlayDateRef = ref(firebaseDB, `users/${userID}/outlays//list/${updateCategory.currentCategory}`);
+        update(outlayDateRef, {
+          name: updateCategory.category,
+          color: updateCategory.color
+        })
       },
       delCategory(cntx, key) {
         const userID = this.getters.userID;

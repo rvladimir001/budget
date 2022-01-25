@@ -15,7 +15,7 @@
 
           <div class="q-pa-md">
             <div style="display: flex">
-              <div style="width: 20px; height: 20px; margin: 5px" :style="{ background:  color}"></div>
+              <div style="width: 20px; height: 20px; margin: 5px" :style="{ background:  defaultColor}"></div>
               <div style=" align-self: center;">Цвет отображения категории</div>
             </div>
 
@@ -30,8 +30,8 @@
           </div>
         </q-card-section>
         <q-card-actions align="right" class="text-secondary">
-          <q-btn flat label="Отмена" @click="setDialog(false)" v-close-popup/>
-          <q-btn flat label="Сохранить" @click="add()" v-close-popup :disable="statusButtonSave"/>
+          <q-btn flat label="Отмена" @click="close" v-close-popup/>
+          <q-btn flat label="Сохранить" @click="save" v-close-popup :disable="statusButtonSave"/>
         </q-card-actions>
       </q-card>
     </q-dialog>
@@ -39,7 +39,7 @@
 </template>
 
 <script>
-import {computed, ref} from 'vue'
+import {computed, ref, watch} from 'vue'
 import {useStore} from "vuex";
 
 export default {
@@ -48,46 +48,68 @@ export default {
     const store = useStore();
     const status = computed(() => store.state.statusDialogCategory);
     const actualPallets = computed(() => store.getters.actualPallets);
+    const editCategory = computed(() => store.getters.editCategory);
     const categoryList = computed(() => {
-        return Object.keys(store.getters.outlays.list).map(function (outlay) {
-          return store.getters.outlays.list[outlay].name.toUpperCase();
-        });
+      return Object.keys(store.getters.outlays.list).map(function (outlay) {
+        return store.getters.outlays.list[outlay].name.toUpperCase();
+      });
+    });
+    const defaultColor = computed(() => {
+      if (color.value !== "") {
+        return color.value
+      }
+      return actualPallets.value[0]
     });
     let category = ref("");
-    let color = ref("#019A9D")
-    const setDialog = (status) => {
-      store.commit("setStatusDialogAddCategory", status);
+    let color = ref("");
+    watch(() => editCategory.value, (first, second) => {
+        if(first) {
+          category.value = editCategory.value.name
+          color.value = editCategory.value.color
+        }
+    });
+
+    const close = () => {
+      store.commit("setEditCategory", null);
+      color.value = ""
+      category.value = ""
+      store.commit("setStatusDialogAddCategory", false);
     };
-    const add = () => {
-      store.dispatch("addCategory", {category: category.value, color: color.value})
+    const save = () => {
+      if(editCategory.value){
+        store.dispatch("editCategory", {category: category.value, color: color.value, key: editCategory.value.key});
+      } else {
+        store.dispatch("addCategory", {category: category.value, color: color.value});
+      }
+      close();
     }
     const statusButtonSave = computed(() => category.value <= 0 || categoryList.value.includes(category.value.trim().toUpperCase()));
     return {
       prompt: ref(false),
       color,
+      defaultColor,
       actualPallets,
       categoryList,
       rules: [
         val => !!val || 'Заполните поле!',
         val => {
-        if(categoryList.value.includes(val.trim().toUpperCase())) {
+          if (categoryList.value.includes(val.trim().toUpperCase())) {
             return "Такая категория уже существует"
-        }
+          }
         },
       ],
       dense: ref(false),
       statusButtonSave,
       category,
-      add,
+      editCategory,
+      save,
       status,
-      setDialog
+      close
     }
   }
 }
 </script>
 
 <style scoped>
-
 </style>
-
 
