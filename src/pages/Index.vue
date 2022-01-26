@@ -80,7 +80,7 @@ export default defineComponent({
       store.commit("setStatusDialogBalance", true);
     }
     const shortName = (name) => {
-      if(name.length > 13) {
+      if(name.length > 10) {
         return `${name.slice(0, 11)}..`;
       }
       return name
