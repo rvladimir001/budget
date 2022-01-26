@@ -95,7 +95,7 @@ module.exports = configure(function (ctx) {
       // components: [],
       // directives: [],
 
-      // Quasar plugins
+      // productName plugins
       plugins: []
     },
 
@@ -140,9 +140,9 @@ module.exports = configure(function (ctx) {
       },
 
       manifest: {
-        name: `Quasar App`,
-        short_name: `Quasar App`,
-        description: `A Quasar Framework app`,
+        name: `myBudget`,
+        short_name: `myBudget`,
+        description: `Expense control app`,
         display: 'standalone',
         orientation: 'portrait',
         background_color: '#ffffff',

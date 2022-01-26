@@ -1,8 +1,8 @@
 {
   "name": "budget",
   "version": "0.0.1",
-  "description": "A Quasar Framework app",
-  "productName": "Quasar App",
+  "description": "Expense control app",
+  "productName": "myBudget",
   "author": "Vladimir <rvladimir001@gmail.com>",
   "private": true,
   "scripts": {
