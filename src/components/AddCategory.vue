@@ -10,7 +10,6 @@
             v-model="category"
             :rules="rules"
             :dense="dense"
-            lazy-rules
             autofocus @keyup.enter="prompt = false"/>
 
           <div class="q-pa-md">
@@ -81,11 +80,14 @@ export default {
       if(editCategory.value){
         store.dispatch("editCategory", {category: category.value, color: color.value, key: editCategory.value.key});
       } else {
+        if(color.value === ""){
+          color.value = defaultColor.value
+        }
         store.dispatch("addCategory", {category: category.value, color: color.value});
       }
       close();
     }
-    const statusButtonSave = computed(() => category.value <= 0 || (!editCategory.value && categoryList.value.includes(category.value.trim().toUpperCase())));
+    const statusButtonSave = computed(() => category.value.length > 30 || category.value <= 0 || (!editCategory.value && categoryList.value.includes(category.value.trim().toUpperCase())));
     return {
       prompt: ref(false),
       color,
@@ -96,7 +98,12 @@ export default {
         val => !!val || 'Заполните поле!',
         val => {
           if (!editCategory.value && categoryList.value.includes(val.trim().toUpperCase())) {
-            return "Такая категория уже существует"
+            return "Такая категория уже существует!"
+          }
+        },
+        val => {
+          if (val.length > 30) {
+            return "Наименование категории не должно превышать 30 символов!"
           }
         },
       ],
