@@ -11,7 +11,6 @@
             v-model="waste"
             autofocus
             @keyup.enter="prompt = false"
-            lazy-rules
             :rules="rules"
             :dense="dense"
           />

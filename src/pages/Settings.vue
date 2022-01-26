@@ -1,6 +1,6 @@
 <template>
   <div class="q-pa-md q-gutter-md q-mx-auto">
-    <q-list separator padding class="rounded-borders q-mx-auto" style="max-width: 350px">
+    <q-list separator padding class="rounded-borders q-mx-auto" style="max-width: 400px">
       <template
         v-for="(outlay, key) in outlays.list"
         v-bind:key="key"
@@ -8,11 +8,17 @@
         <q-item
           v-if="!outlay.deleted"
         >
-          <q-item-section>
-            <q-item-label lines="1" class="text-secondary">{{ outlay.name }}</q-item-label>
+          <q-item-section style="display: flex">
+            <q-item-label lines="1" class="text-secondary">
+              <div style="display: flex; align-items:center">
+                <div style="width: 20px; height: 20px; margin: 5px" :style="{ background:  outlay.color}"></div>
+                {{ shortName(outlay.name) }}
+              </div>
+            </q-item-label>
           </q-item-section>
           <q-item-section side>
-            <q-icon @click="openEditDialog({key: key, name: outlay.name, color: outlay.color})" class="edit" name="edit" color="secondary"/>
+            <q-icon @click="openEditDialog({key: key, name: outlay.name, color: outlay.color})" class="edit" name="edit"
+                    color="secondary"/>
           </q-item-section>
           <q-item-section side>
             <q-icon @click="openDelDialog({key: key, name: outlay.name})" class="delete" name="delete" color="red"/>
@@ -46,11 +52,18 @@ export default {
       store.commit("setEditCategory", category);
       store.commit("setStatusDialogAddCategory", true);
     }
+    const shortName = (name) => {
+      if (name.length > 25) {
+        return `${name.slice(0, 26)}..`;
+      }
+      return name
+    }
     return {
       outlays,
       openAddCategoryDialog,
       openDelDialog,
       openEditDialog,
+      shortName
     }
   }
 }
@@ -63,7 +76,7 @@ export default {
 
 .plus {
   margin-left: auto;
-  margin-right: 5rem;
+  margin-right: -15rem;
   font-size: 1rem;
 }
 </style>

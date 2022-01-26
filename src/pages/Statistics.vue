@@ -15,6 +15,7 @@
           hide-bottom
           row-key="name"
           class="text-secondary"
+          style="max-width: 380px"
         />
       </div>
       <div v-if="archiveData">
@@ -57,7 +58,7 @@ export default {
       store.dispatch("getArchive")
     });
     onMounted(() => {
-      if(sumOutlays.value){
+      if (sumOutlays.value) {
         updateChart()
       }
     });
@@ -122,7 +123,7 @@ export default {
         required: true,
         label: 'Наименование',
         align: 'left',
-        field: row => row.name,
+        field: row => shortName(row.name),
         format: val => `${val}`,
         sortable: true,
       },
@@ -167,6 +168,12 @@ export default {
         }
       ]
       chartRef.value.update(250);
+    }
+    const shortName = (name) => {
+      if (name.length > 25) {
+        return `${name.slice(0, 26)}..`;
+      }
+      return name
     }
     return {
       showTable: ref(true),
