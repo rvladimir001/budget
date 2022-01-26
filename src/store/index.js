@@ -2,8 +2,19 @@ import {store} from 'quasar/wrappers'
 import {createStore} from 'vuex'
 
 import {firebaseDB, firebaseAuth} from 'boot/firebase.js'
-import {ref, set, onValue, update, push, remove} from "firebase/database";
-import {createUserWithEmailAndPassword, signInWithEmailAndPassword, onAuthStateChanged, signOut} from "firebase/auth";
+import {ref, onValue} from "firebase/database";
+import {onAuthStateChanged, signOut} from "firebase/auth";
+import {
+  add, archive,
+  edit,
+  login,
+  pay,
+  registration,
+  setDeleteStatus, transferToArchive,
+  updateBalanceAdd,
+  updateBalancePay,
+  updateDate
+} from "src/api/api";
 
 export default store(function (/* { ssrContext } */) {
   const Store = createStore({
@@ -104,50 +115,7 @@ export default store(function (/* { ssrContext } */) {
       registrationUser(cntx, user) {
         cntx.commit('setEmailAlreadyInUse', false);
         cntx.commit('setInvalidRegEmail', false);
-        const today = new Date();
-        createUserWithEmailAndPassword(firebaseAuth, user.email.value, user.pas.value)
-          .then(response => {
-            let userID = response.user.uid;
-            set(ref(firebaseDB, `users/${userID}`), {
-              name: user.name.value,
-              email: user.email.value,
-              calculation: 1,
-              creation: String(today),
-              archive: false,
-              outlays: {
-                update: String(today),
-                creation: String(today),
-                balance: 0,
-                countBalance: 0,
-                list: [
-                  {
-                    name: "Продукты",
-                    outlay: 0,
-                    color: '#ff0000',
-                    deleted: false
-                  },
-                  {
-                    name: "Транспорт",
-                    outlay: 0,
-                    color: '#ff8000',
-                    deleted: false
-                  },
-                  {
-                    name: "Развлечения",
-                    outlay: 0,
-                    color: '#ffff00',
-                    deleted: false
-                  },
-                  {
-                    name: "Услуги",
-                    outlay: 0,
-                    color: '#00ff00',
-                    deleted: false
-                  }
-                ]
-              }
-            });
-          })
+        registration(user)
           .catch(error => {
             if (error.code === 'auth/email-already-in-use') {
               cntx.commit('setEmailAlreadyInUse', true);
@@ -160,7 +128,7 @@ export default store(function (/* { ssrContext } */) {
       loginUser(cntx, user) {
         cntx.commit('setInvalidEmail', false);
         cntx.commit('setWrongPassword', false);
-        signInWithEmailAndPassword(firebaseAuth, user.email.value, user.pas.value)
+        login(user)
           .catch(error => {
             if (error.code === 'auth/invalid-email') {
               cntx.commit('setInvalidEmail', true);
@@ -184,29 +152,7 @@ export default store(function (/* { ssrContext } */) {
             const countRef = ref(firebaseDB, `users/${userID}`);
             onValue(countRef, (snapshot) => {
               const userData = snapshot.val();
-              const actualYear = new Date().getFullYear();
-              const actualMonth = new Date().getMonth();
-              const creationYear = new Date(userData.outlays.creation).getFullYear();
-              const creationMonth = new Date(userData.outlays.creation).getMonth();
-              if (actualYear > creationYear || (actualYear === creationYear && actualMonth > creationMonth)) {
-                const outlayArchiveRef = ref(firebaseDB, `users/${userID}/archive/${userData.outlays.creation}`);
-                update(outlayArchiveRef, Object.assign({}, userData.outlays))
-                const outlayDateRef = ref(firebaseDB, `users/${userID}/outlays/`);
-                update(outlayDateRef, {
-                  creation: String(new Date()),
-                  countBalance: 0
-                })
-                for (let key in userData.outlays.list) {
-                  const outlayListRef = ref(firebaseDB, `users/${userID}/outlays/list/${key}`);
-                  if (userData.outlays.list[key].deleted) {
-                    remove(outlayListRef);
-                  } else {
-                    update(outlayListRef, {
-                      outlay: 0
-                    });
-                  }
-                }
-              }
+              transferToArchive(userID, userData)
               cntx.commit('setUserDetails', {
                 name: userData.name,
                 email: userData.email,
@@ -230,129 +176,44 @@ export default store(function (/* { ssrContext } */) {
       },
       addCategory(cntx, category) {
         const userID = this.getters.userID;
-        const outlayListRef = ref(firebaseDB, `users/${userID}/outlays/list`);
-        const newOutlayRef = push(outlayListRef);
-        set(newOutlayRef, {
-          name: category.category,
-          color: category.color,
-          deleted: false,
-          outlay: 0
-        }).then(() => {
-          cntx.commit('setStatusDialogAddCategory', false);
-        })
+        add(userID, category)
+          .then(() => {
+            cntx.commit('setStatusDialogAddCategory', false);
+          })
       },
       editCategory(cntx, updateCategory) {
         const userID = this.getters.userID;
-        const outlayDateRef = ref(firebaseDB, `users/${userID}/outlays//list/${updateCategory.key}`);
-        update(outlayDateRef, {
-          name: updateCategory.category,
-          color: updateCategory.color
-        })
+        return edit(userID, updateCategory)
       },
       delCategory(cntx, key) {
         const userID = this.getters.userID;
-        const todayUpdate = new Date();
-        const outlayListRef = ref(firebaseDB, `users/${userID}/outlays/list/${key}`);
-        update(outlayListRef, {
-          deleted: true
-        }).then(() => {
-          const outlayDateRef = ref(firebaseDB, `users/${userID}/outlays/`);
-          update(outlayDateRef, {
-            update: String(todayUpdate)
+        setDeleteStatus(userID, key)
+          .then(() => updateDate(userID))
+          .then(() => {
+            cntx.commit('setStatusDialogWaste', false);
           })
-        }).then(() => {
-          cntx.commit('setStatusDialogWaste', false);
-        })
       },
       addOutlay(cntx, newOutlay) {
         const oldValue = Number(newOutlay.currentOutlay.value.outlay.outlay);
         const userID = this.getters.userID;
-        const todayUpdate = new Date();
+        const oldBalance = this.getters.outlays.balance
         const newOutlayValue = Number(newOutlay.value.value)
-        const outlayListRef = ref(firebaseDB, `users/${userID}/outlays/list/${newOutlay.currentOutlay.value.key}`);
-        update(outlayListRef, {
-          outlay: oldValue + newOutlayValue
-        }).then(() => {
-          const oldBalance = this.getters.outlays.balance
-          const outlayDateRef = ref(firebaseDB, `users/${userID}/outlays/`);
-          update(outlayDateRef, {
-            balance: Number(oldBalance) - newOutlayValue,
+        pay(userID, oldValue, newOutlayValue, newOutlay).then(() => updateBalancePay(userID, oldBalance, newOutlayValue))
+          .then(() => updateDate(userID))
+          .then(() => {
+            cntx.commit('setStatusDialogWaste', false);
           })
-        }).then(() => {
-          const outlayDateRef = ref(firebaseDB, `users/${userID}/outlays/`);
-          update(outlayDateRef, {
-            update: String(todayUpdate)
-          })
-        }).then(() => {
-          cntx.commit('setStatusDialogWaste', false);
-        })
       },
       addBalance(cntx, newMany) {
         const userID = this.getters.userID;
         const oldBalance = this.getters.outlays.balance;
-        const outlayDateRef = ref(firebaseDB, `users/${userID}/outlays/`);
-        update(outlayDateRef, {
-          balance: Number(oldBalance) + Number(newMany),
-          countBalance: Number(oldBalance) + Number(newMany)
-        })
+        return updateBalanceAdd(userID, oldBalance, newMany)
       },
       getArchive(cntx) {
         const userID = this.getters.userID;
-        const countRef = ref(firebaseDB, `users/${userID}`);
-        const months = {
-          0: "Январь",
-          1: "Февраль",
-          2: "Март",
-          3: "Апрель",
-          4: "Мая",
-          5: "Июнь",
-          6: "Июль",
-          7: "Август",
-          8: "Сентябрь",
-          9: "Октябрь",
-          10: "Нояборь",
-          11: "Декабрь"
-        }
-        let yearsData = {}
-        onValue(countRef, (snapshot) => {
-          const userData = snapshot.val();
-          const archive = Object.values(userData.archive)
-          for(let elem in archive) {
-            const currentDate = new Date(archive[elem].update);
-            let year = String(currentDate.getFullYear());
-            let month = months[currentDate.getMonth()];
-            const outlaysList = Object.values(archive[elem].list);
-            let outlayResult = 0;
-            for(let category in outlaysList) {
-              outlayResult+=outlaysList[category].outlay
-            }
-            if(Object.keys(yearsData).includes(year)) {
-              yearsData[year]['label'].push(month)
-              yearsData[year]['data'].push(outlayResult)
-            } else {
-              yearsData[year] = {};
-              yearsData[year]['label'] = [month];
-              yearsData[year]['data'] = [outlayResult];
-            }
-          }
-          const actualOutlays = this.getters.outlays;
-          const actualDate = new Date(actualOutlays.update)
-          const actualYear = String(actualDate.getFullYear())
-          const actualMonth = months[actualDate.getMonth()];
-          let actualOutlayResult = 0;
-            for(let category in actualOutlays.list) {
-              actualOutlayResult+=actualOutlays.list[category].outlay
-            }
-          if(Object.keys(yearsData).includes(actualYear)) {
-              yearsData[actualYear]['label'].push(actualMonth)
-              yearsData[actualYear]['data'].push(actualOutlayResult)
-            } else {
-              yearsData[actualYear] = {};
-              yearsData[actualYear]['label'] = [actualMonth];
-              yearsData[actualYear]['data'] = [actualOutlayResult];
-            }
-        })
-        cntx.commit('setArchiveData', yearsData);
+        const actualOutlays = this.getters.outlays;
+        const arch = archive(userID, actualOutlays)
+        cntx.commit('setArchiveData', arch);
       }
     },
     modules: {
