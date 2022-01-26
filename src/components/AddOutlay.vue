@@ -36,7 +36,7 @@ export default {
     const status = computed(() => store.state.statusDialogWaste);
     const currentOutlay = computed(() => store.state.currentOutlay);
     const balance = computed(() => store.state.outlays.balance);
-    const statusButtonSave = computed(() => waste.value > balance.value || waste.value<=0);
+    const statusButtonSave = computed(() => waste.value > balance.value || waste.value <= 0);
     let waste = ref('');
     const close = (status) => {
       waste.value = "";
@@ -53,7 +53,16 @@ export default {
       rules: [
         val => !!val || 'Заполните поле!',
         val => (val < balance.value) || 'В кошельке столько нет!',
-        val => (val > 0) || 'Значение должно быть больше 0!'
+        val => (val > 0) || 'Значение должно быть больше 0!',
+        val => {
+          if (String(val).trim().indexOf(".") < 0) {
+            return true
+          } else if (String(val).trim().split(".")[1].length <= 2) {
+            return true
+          } else {
+            return 'Некорректное значение!'
+          }
+        }
       ],
       currentOutlay,
       waste,

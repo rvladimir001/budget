@@ -33,7 +33,7 @@ export default {
     const store = useStore();
     const status = computed(() => store.state.statusDialogBalance);
     const currentOutlay = computed(() => store.state.currentOutlay);
-    const statusButtonSave = computed(() => refill.value<=0);
+    const statusButtonSave = computed(() => refill.value <= 0);
     let refill = ref('')
     const close = () => {
       refill.value = ''
@@ -48,7 +48,16 @@ export default {
       dense: ref(false),
       rules: [
         val => !!val || 'Заполните поле!',
-        val => (val > 0) || 'Значение должно быть больше 0!'
+        val => (val > 0) || 'Значение должно быть больше 0!',
+        val => {
+          if (String(val).trim().indexOf(".") < 0) {
+            return true
+          } else if (String(val).trim().split(".")[1].length <= 2) {
+            return true
+          } else {
+            return 'Некорректное значение!'
+          }
+        }
       ],
       currentOutlay,
       refill,
