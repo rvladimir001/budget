@@ -43,6 +43,7 @@
 import Vue3ChartJs from "@j-t-mcc/vue3-chartjs";
 import {useStore} from "vuex";
 import {computed, onMounted, onBeforeMount, ref} from "vue";
+import {shortName} from "../utils.js"
 
 export default {
   name: "Statistics",
@@ -169,14 +170,7 @@ export default {
       ]
       chartRef.value.update(250);
     }
-    const shortName = (name) => {
-      if (name.length > 25) {
-        return `${name.slice(0, 26)}..`;
-      }
-      return name
-    }
     return {
-      showTable: ref(true),
       currentDate,
       doughnutChart,
       barChart,
@@ -191,6 +185,7 @@ export default {
       currentYear,
       defaultYear,
       chartRef,
+      showTable: ref(true),
       updateChart
     };
   },

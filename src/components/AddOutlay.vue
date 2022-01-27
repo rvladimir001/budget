@@ -48,7 +48,11 @@ export default {
     return {
       balance,
       statusButtonSave,
+      currentOutlay,
+      waste,
+      status,
       dense: ref(false),
+      prompt: ref(false),
       rules: [
         val => !!val || 'Заполните поле!',
         val => (val < balance.value) || 'В кошельке столько нет!',
@@ -63,11 +67,7 @@ export default {
           }
         }
       ],
-      currentOutlay,
-      waste,
       add,
-      prompt: ref(false),
-      status,
       close
     }
   }

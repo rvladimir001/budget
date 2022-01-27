@@ -61,9 +61,9 @@ export default {
       ],
       currentOutlay,
       refill,
-      add,
-      prompt: ref(false),
       status,
+      prompt: ref(false),
+      add,
       close
     }
   }

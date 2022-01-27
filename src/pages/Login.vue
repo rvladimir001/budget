@@ -19,23 +19,23 @@
             <div>
               <div class="q-gutter-y-md column q-mx-auto" style="max-width: 300px">
                 <q-input
-                         v-model="loginEmail"
-                         label="Почта"
-                         :dense="dense"
-                         error-message="Неверно указана почта или не пройдена регистрация."
-                         :error="invalidEmail"
-                         lazy-rules
-                         :rules="valRules"
+                  v-model="loginEmail"
+                  label="Почта"
+                  :dense="dense"
+                  error-message="Неверно указана почта или не пройдена регистрация."
+                  :error="invalidEmail"
+                  lazy-rules
+                  :rules="valRules"
                 />
                 <q-input
-                         v-model="loginPas"
-                         label="Пароль"
-                         :dense="dense"
-                         :type="isPwd ? 'password' : 'text'"
-                         error-message="Неверный пароль."
-                         :error="wrongPassword"
-                         lazy-rules
-                         :rules="valRules">
+                  v-model="loginPas"
+                  label="Пароль"
+                  :dense="dense"
+                  :type="isPwd ? 'password' : 'text'"
+                  error-message="Неверный пароль."
+                  :error="wrongPassword"
+                  lazy-rules
+                  :rules="valRules">
                   <template v-slot:append>
                     <q-icon
                       :name="isPwd ? 'visibility_off' : 'visibility'"
@@ -131,17 +131,17 @@ export default {
       RegName,
       regPas,
       RegEmail,
-      isPwd: ref(true),
-      dense: ref(false),
-      tab: ref('login'),
-      registration,
-      login,
       disabledLogin,
       disabledReg,
       invalidEmail,
       wrongPassword,
       invalidRegEmail,
-      emailAlreadyInUse
+      emailAlreadyInUse,
+      isPwd: ref(true),
+      dense: ref(false),
+      tab: ref('login'),
+      registration,
+      login,
     }
   }
 }

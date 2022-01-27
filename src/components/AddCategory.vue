@@ -45,12 +45,14 @@ export default {
   name: "AddCategory",
   setup() {
     const store = useStore();
+    let category = ref("");
+    let color = ref("");
     const status = computed(() => store.state.statusDialogCategory);
     const actualPallets = computed(() => store.getters.actualPallets);
     const editCategory = computed(() => store.getters.editCategory);
     const categoryList = computed(() => {
       return Object.keys(store.getters.outlays.list).map(function (outlay) {
-        if(!store.getters.outlays.list[outlay].deleted){
+        if (!store.getters.outlays.list[outlay].deleted) {
           return store.getters.outlays.list[outlay].name.toUpperCase();
         }
       });
@@ -61,13 +63,11 @@ export default {
       }
       return actualPallets.value[0]
     });
-    let category = ref("");
-    let color = ref("");
     watch(() => editCategory.value, (first, second) => {
-        if(first) {
-          category.value = editCategory.value.name
-          color.value = editCategory.value.color
-        }
+      if (first) {
+        category.value = editCategory.value.name
+        color.value = editCategory.value.color
+      }
     });
 
     const close = () => {
@@ -77,10 +77,10 @@ export default {
       store.commit("setStatusDialogAddCategory", false);
     };
     const save = () => {
-      if(editCategory.value){
+      if (editCategory.value) {
         store.dispatch("editCategory", {category: category.value, color: color.value, key: editCategory.value.key});
       } else {
-        if(color.value === ""){
+        if (color.value === "") {
           color.value = defaultColor.value
         }
         store.dispatch("addCategory", {category: category.value, color: color.value});
@@ -89,11 +89,14 @@ export default {
     }
     const statusButtonSave = computed(() => category.value.length > 30 || category.value <= 0 || (!editCategory.value && categoryList.value.includes(category.value.trim().toUpperCase())));
     return {
-      prompt: ref(false),
       color,
       defaultColor,
       actualPallets,
       categoryList,
+      statusButtonSave,
+      category,
+      editCategory,
+      status,
       rules: [
         val => !!val || 'Заполните поле!',
         val => {
@@ -107,12 +110,9 @@ export default {
           }
         },
       ],
+      prompt: ref(false),
       dense: ref(false),
-      statusButtonSave,
-      category,
-      editCategory,
       save,
-      status,
       close
     }
   }

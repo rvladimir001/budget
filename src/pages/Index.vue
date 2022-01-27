@@ -89,33 +89,27 @@ export default defineComponent({
 
     return {
       outlays,
+      showMany,
       setDialog,
       openAddCategoryDialog,
       addBalance,
       shortName,
-      showMany,
-      // store the id of the draggable element
       onDragStart(e) {
         showMany = "1"
         e.dataTransfer.setData('text', e.target.id)
         e.dataTransfer.dropEffect = 'move'
       },
-
       onDragEnter(e) {
-        // don't drop on other draggables
         if (e.target.draggable !== true) {
           e.target.classList.add('drag-enter')
         }
       },
-
       onDragLeave(e) {
         e.target.classList.remove('drag-enter')
       },
-
       onDragOver(e) {
         e.preventDefault()
       },
-
       onDrop(category) {
         Object.keys(outlays.value.list).forEach((key, element) => {
           if (category === outlays.value.list[key].name) {
